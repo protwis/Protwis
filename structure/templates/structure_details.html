@@ -29,13 +29,9 @@
 
             <div style="display: inline;">
               <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Download <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a id="download_btn1" href="./{{crystal.pdb_code.index}}/download_pdb">Full</a></li>
-                    <!-- <li><a id="download_btn2" href="./{{model.protein_conformation.protein.entry_name|upper}}_noloops/download_pdb">Without loops</a></li> -->
-                  </ul>
+                <button type="button" class="btn btn-sm btn-primary" id="download_btn_advanced">
+                  Download
+                </button>
               </div>
             </div>
             <div style="display: inline;">
@@ -189,13 +185,9 @@
 
             <div style="display: inline;">
               <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Download <span class="caret"></span>
+                  <button type="button" class="btn btn-sm btn-primary" id="download_btn_advanced">
+                    Download
                   </button>
-                  <ul class="dropdown-menu">
-                    <li><a id="download_btn1" href="./{{crystal.pdb_code.index}}/download_pdb">Full</a></li>
-                    <!-- <li><a id="download_btn2" href="./{{model.protein_conformation.protein.entry_name|upper}}_noloops/download_pdb">Without loops</a></li> -->
-                  </ul>
               </div>
             </div>
             <div style="display: inline;">
@@ -335,6 +327,26 @@
 
 {% endblock %}
 {% block addon_js %}
+
+<script>
+  $(document).ready(function() {
+
+    $("#download_btn_advanced").click(function() {
+      // This function is for advanced download options of the structure,
+      // unlike the button written in structure_browser.js and used in structure_browser.html,
+      // this button is simplified.
+      // 1) Clear old selections
+      ClearSelection("targets");
+
+      // 2) Add this single structure by PDB code
+      AddToSelection("targets", "structure_many", "{{ crystal.pdb_code.index|upper }}");
+
+      // 3) Redirect to the advanced /structure/pdb_download page
+      window.location.href = "/structure/pdb_download";
+    });
+
+  });
+</script>
 
 {% if signaling_complex %}
 <script src="{% static 'home/js/d3.min.js' %}"></script>
