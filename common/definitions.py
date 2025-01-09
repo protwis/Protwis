@@ -2269,6 +2269,7 @@ G_PROTEIN_DISPLAY_NAME = { # Alpha
                            'GNAQ':'Gq', 'GNA11':'G11', 'GNA14':'G14', 'GNA15':'G15',
                            'GNA12':'G12', 'GNA13':'G13',
                            'GPa1':'GPa1', 'GPA1':'GPa1',
+                           'F6VL43':'Gi3',
                            # Beta
                            'G(I)/G(S)/G(T) subunit beta-1':'G&beta;1',
                            'BJ4_G0051350.mRNA.1.CDS.1':'STE4 isoform 1',

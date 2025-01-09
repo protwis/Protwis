@@ -299,7 +299,10 @@ class ResidueTablesDisplay(TemplateView):
         flattened_data = OrderedDict.fromkeys([x.slug for x in segments], [])
 
         for s in iter(flattened_data):
-            flattened_data[s] = [[data[s][x][y.slug] if y.slug in data[s][x] else '-' for y in numbering_schemes ] + data[s][x]['seq'] for x in sorted(data[s]) ]
+            if s=='B.GPS':
+                flattened_data[s] = [[data[s][x][y.slug] if y.slug in data[s][x] else '-' for y in numbering_schemes ] + data[s][x]['seq'] for x in data[s] ]
+            else:
+                flattened_data[s] = [[data[s][x][y.slug] if y.slug in data[s][x] else '-' for y in numbering_schemes ] + data[s][x]['seq'] for x in sorted(data[s]) ]
 
         #Purging the empty segments
         clean_dict = OrderedDict()

@@ -61,7 +61,7 @@ function ApplyCutoff (cutoff) {
     });
 
     $('#signature-table #segments td:not("#anchor")').each(function(){
-        var segment_name = $(this).attr('id').replace('segment-', '');
+        var segment_name = $(this).attr('id').replace('segment-', '').replace(".","\\.");
         var colspan = $('#gns td#gn-'+segment_name+':visible').length;
         $(this).attr('colspan', colspan);
     });

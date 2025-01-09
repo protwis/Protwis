@@ -130,11 +130,21 @@
   overflow-x: scroll;
 }
 
+.ali-first-container {
+  position: absolute;
+  width: 250px;
+}
+
+.ali-scroll-container {
+  position: absolute; 
+  left: 250px; 
+  width: 1000px;
+}
+
 .ali-scroll-div,
 .ali-main-div {
   overflow-x: auto;
   overflow-y: hidden;
-  width: 920px;
 }
 
 .ali-scroll-div,

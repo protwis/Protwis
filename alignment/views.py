@@ -297,9 +297,10 @@ def render_alignment(request):
         a.calculate_statistics()
         num_of_sequences = len(a.proteins)
         num_residue_columns = len(a.positions) + len(a.segments)
+        segment_headers_to_hide = [seg for seg, posis in a.segments.items() if len(posis)==0]
 
         return_html = render(request, 'alignment/alignment.html', {'a': a, 'num_of_sequences': num_of_sequences,
-            'num_residue_columns': num_residue_columns})
+            'num_residue_columns': num_residue_columns, 'segment_headers_to_hide': segment_headers_to_hide})
 
     cache_alignment.set(key, return_html, 60*60*24*7) #set alignment cache one week
 

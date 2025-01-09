@@ -90,6 +90,11 @@ class Command(BaseCommand):
                 else:
                     fully_aligned = False
 
+                if len(split_row)==6:
+                    domain = split_row[5]
+                else:
+                    domain = None
+
                 # create segment
                 try:
                     defaults={
@@ -98,7 +103,7 @@ class Command(BaseCommand):
                         'name': split_row[3]
                     }
 
-                    s, created = ProteinSegment.objects.get_or_create(slug=split_row[0], proteinfamily=split_row[4], defaults=defaults)
+                    s, created = ProteinSegment.objects.get_or_create(slug=split_row[0], proteinfamily=split_row[4], domain=domain, defaults=defaults)
                     s.save()
 
                     if created:

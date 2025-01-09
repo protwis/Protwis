@@ -1544,11 +1544,12 @@ class ModelRotamer(object):
 class X50Finder():
     '''Find corresponding x50 positions based on best BLAST hit in db
     '''
-    def __init__(self, uniprot_file):
+    def __init__(self, uniprot_file, debug=False):
         self.uniprot_file = uniprot_file
         p = PDBParser()
         self.biopdb = p.get_structure('structure', self.uniprot_file)
         self.top_hit = None
+        self.debug = debug
 
     def get_sequence_from_structure(self):
         structure_seq = {}
@@ -1586,6 +1587,9 @@ class X50Finder():
                 print('ERROR: no good pairwise alignment for {}'.format(self.uniprot_file.split('/')[-1]))
 
             ref_seq, temp_seq = str(pw2[0][0]), str(pw2[0][1])
+            if self.debug:
+                for r, t in zip(ref_seq, temp_seq):
+                    print(r,t)
 
             x50s = Residue.objects.filter(protein_conformation__protein=ref, display_generic_number__label__endswith='x50')
             indeces = {}

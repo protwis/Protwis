@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
                         ### Running x50 finder
                         if up['entry_name'] not in self.nonxtal_seg_ends:
-                            x = X50Finder(os.sep.join([path_to_models, m]))
+                            x = X50Finder(os.sep.join([path_to_models, m]), self.debug)
                             x50s_gn = x.run()
 
                             if self.debug:
@@ -154,6 +154,8 @@ class Command(BaseCommand):
                             x50s['6x'] = 262
                             x50s['7x'] = 286
                             x50s['8x'] = 295
+                        elif m=='O14718.pdb':
+                            x50s['1x'] = 43
                         ###
 
                         for lab, x50 in x50s.items():
@@ -370,7 +372,7 @@ class Command(BaseCommand):
                             if len([a for a in data['auxiliary_protein'] if a in self.parsed_structures.fusion_proteins])>0:
                                 fusion_present = True
                                 try:
-                                    d = fetch_pdb_info(s, parent_protein, True)
+                                    d = fetch_pdb_info(s, parent_protein, True, preferred_chain=data['preferred_chain'])
                                     if self.debug:
                                         print('pdb info fetched', datetime.now()- starttime)
                                     if 'deletions' in d:
@@ -443,7 +445,7 @@ class Command(BaseCommand):
                         dssp = self.dssp(s, structure[0][data['preferred_chain']], structure)
 
                         if fusion_present or s in ['7V68','7V69','7V6A','7W6P','7W7E','8E9W','8E9X','8E9Y','8E9Z','8EA0','7T8X','7T90','7T94','7T96',
-                                                   '7TRK','7TRP','7TRQ','7TRS','8IRU','8FX5','8W8R','8W8S','7V9L','8TZQ','8U02']:
+                                                   '7TRK','7TRP','7TRQ','7TRS','8IRU','8FX5','8W8R','8W8S','7V9L','8TZQ','8U02','8YN2']:
                             pw2 = Bio.pairwise2.align.localms(parent_seq, seq, 3, -3, -3.5, -1)
                         else:
                             pw2 = Bio.pairwise2.align.localms(parent_seq, seq, 3, -4, -5, -2)
@@ -603,6 +605,9 @@ class Command(BaseCommand):
                             elif s=='8YW3' and i==6:
                                 start = 346
                                 end = 367
+                            elif s in ['9C1P','9C2F'] and i==3:
+                                start = 673
+                                end = 698
 
                             if i<8 and (start=='-' or end=='-'):
                                 print('WARNING: helix {} for {} {} has missing annotation'.format(i, s, parent_protein))

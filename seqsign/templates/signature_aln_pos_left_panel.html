@@ -1,4 +1,4 @@
-<table width='260px'>
+<table width='250px'>
 
     <!-- SEQUENCE ALIGNMENT 1 (POSITIVE) -->
 
@@ -49,7 +49,7 @@
         <!-- numbering scheme lines -->
         {% for ns in a_pos.numbering_schemes %}
         <tr>
-            <td class="ali-td-generic-num ali-td-first-col" colspan="3"><a href='http://docs.gpcrdb.org/generic_numbering.html'><span class="glyphicon glyphicon-question-sign"></span></a> Residue number<br>Sequence-based ({{ ns.2 }})<br>Structure-based (GPCRdb)</td>
+            <td class="ali-td-generic-num ali-td-first-col" colspan="3">Subdomain<br>Segment<br>Sequence-based ({{ ns.2 }})<br>Structure-based (GPCRdb)</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -112,7 +112,7 @@
             <!-- numbering scheme lines -->
             {% for ns in a_pos.numbering_schemes %}
                 <tr>
-                    <td class="ali-td-generic-num ali-td-first-col" colspan="3"><a href='http://docs.gpcrdb.org/generic_numbering.html'><span class="glyphicon glyphicon-question-sign"></span></a> Residue number<br>Sequence-based ({{ ns.2 }})<br>Structure-based (GPCRdb)</td>
+                    <td class="ali-td-generic-num ali-td-first-col" colspan="3">Subdomain<br>Segment<br>Sequence-based ({{ ns.2 }})<br>Structure-based (GPCRdb)</td>
                 </tr>
             {% endfor %}
         </tbody>

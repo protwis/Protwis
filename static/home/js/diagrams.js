@@ -549,6 +549,11 @@ $("#snake_svg_link").click(function() {
         $("#snake_svg_link").attr('href',uri);
     });
 });
+$("#snake_svg_link2").click(function() {
+    svgAsDataUri(document.getElementById("snakeplot2"),{}, function(uri) {
+        $("#snake_svg_link2").attr('href',uri);
+    });
+});
 $("#helix_svg_link").click(function() {
     svgAsDataUri(document.getElementById("helixbox"),{}, function(uri) {
         $("#helix_svg_link").attr('href',uri);

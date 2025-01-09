@@ -13,14 +13,15 @@ class ResidueBFactorSelect(Select):
     A selection class for filtering residues based on the B-factor of their CA atoms.
     Only residues with CA atom B-factors within the specified range are selected.
     """
-    def __init__(self, bfactor_range=(1.0, 7.0)):
+    def __init__(self, bfactor_range=(-8.0, 8.0)):
         """
         Initializes the selection object with the specified B-factor range.
 
         Parameters:
         -----------
         bfactor_range : tuple, optional
-            The inclusive range of B-factors to select residues. Default is (1.0, 7.0).
+            The inclusive range of B-factors to select residues. Default is (-8.0, 8.0).
+            Negative range is to catch bulges.
         """
         self.bfactor_range = bfactor_range
 
@@ -41,7 +42,7 @@ class ResidueBFactorSelect(Select):
         for atom in residue:
             if atom.get_id() == 'CA':
                 bfactor = atom.get_bfactor()
-                if self.bfactor_range[0] <= bfactor <= self.bfactor_range[1]:
+                if self.bfactor_range[0] < bfactor < self.bfactor_range[1]:
                     return True
         return False
 

@@ -7,6 +7,10 @@
             <td id='anchor' class="ali-td">&nbsp;</td>
         {% endfor %}
     </tr>
+    <!-- Empty row for subheader -->
+    <tr>
+        <td class="ali-td ali-td-header-row ali-td-first-col" colspan='3'></td>
+    </tr>
     <!-- SEQUENCE SIGNATURE -->
     <tr>
         <td class="ali-td-header-row signature-section-header-row" colspan="{{ num_residue_columns }}"></td>
@@ -15,10 +19,18 @@
     <!-- GENERIC NUMBERS -->
 
     <!-- segment title line -->
-    <tr id='segments'>
+    <tr id="segments">
         {% for s, num in common_segments.items %}
-            <td id='segment-{{ s }}' class="ali-td ali-td-segment-title" colspan="{{ num|length }}">{{ s }}</td>
-            <td id='anchor' class="ali-td-anchor">&nbsp;</td>
+            {% if s not in segment_headers_to_hide %}
+                {% if s.1 == "." %}
+                    <td id="segment-{{ s }}" class="ali-td ali-td-segment-title" colspan="{{ num|length }}">{{ s|slice:'2:' }}</td>
+                {% else %}
+                    <td id="segment-{{ s }}" class="ali-td ali-td-segment-title" colspan="{{ num|length }}">{{ s }}</td>
+                {% endif %}
+                <td id="anchor" class="ali-td-anchor">&nbsp;</td>
+            {% else %}
+                <td id="anchor" class="ali-td-anchor">&nbsp;</td>
+            {% endif %}
         {% endfor %}
     </tr>
 

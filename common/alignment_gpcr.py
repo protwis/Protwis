@@ -7,6 +7,7 @@ from copy import deepcopy
 class Alignment(GenericAlignment):
     """A class representing a protein sequence alignment, with or without a reference sequence"""
     ECD_segments = ProteinSegment.objects.filter(name__startswith='ECD').values_list('slug', flat=True)
+    sequence_based_segments = ProteinSegment.objects.filter(proteinfamily__in=['Alpha','Arrestin']).values_list('slug', flat=True)
 
     def merge_generic_numbers(self):
         """Check whether there are many display numbers for each position, and merge them if there are"""
@@ -52,8 +53,27 @@ class Alignment(GenericAlignment):
         if not generic_number:
             return ""
 
-        if len(generic_number.split('.'))>2:
+        if len(generic_number.split('.'))==3:
             formatted_gn = generic_number
+            split_gn = generic_number.split('.')
+            subdomain = split_gn[0]
+            segment = split_gn[1]
+            full_segment = '.'.join([subdomain, segment])
+            if full_segment in self.sequence_based_segments:# or segment in self.sequence_based_segments: # Second part is temp fix for arrestins
+                seq_gn = split_gn[2]
+                if seq_gn.startswith('0'):
+                    seq_gn = seq_gn[1:]
+                seq_gn = '.'+seq_gn
+                struct_gn = '-'
+            else:
+                seq_gn = '-'
+                struct_gn = split_gn[2]
+                if struct_gn.startswith('0'):
+                    struct_gn = struct_gn[1:] 
+                struct_gn = '.'+struct_gn
+
+            formatted_gn = ''
+            formatted_gn += '<b>{}</b><br /><b>{}</b><br /><span class="ali-td-generic-num-normal">{}<br /></span>{}'.format(subdomain, segment, seq_gn, struct_gn)
         # elif len(generic_number.split('.'))==2:
         #     formatted_gn = '<br />'
         #     seq_class = 'ali-td-generic-num-normal'
@@ -63,6 +83,15 @@ class Alignment(GenericAlignment):
             formatted_gn = '<br />'
             seq_class = 'ali-td-generic-num-normal'
             formatted_gn += '<span class="{:s}">{:s}<br /></span>'.format(seq_class, generic_number)
+        elif generic_number.startswith('B.GPS'):
+            formatted_gn = generic_number
+            split_gn = generic_number.split('.')
+            subdomain = split_gn[0]
+            segment = 'GPS'
+            full_segment = '.'.join([subdomain, segment])
+            seq_gn = '-'
+            struct_gn =  split_gn[1][-2:]
+            formatted_gn = '<b>{}</b><br /><b>{}</b><br /><span class="ali-td-generic-num-normal">{}<br /></span>{}'.format(subdomain, segment, seq_gn, struct_gn)
         else:
             split_gn = generic_number.split("x")
             split_gn_helix = split_gn[0].split('.')
@@ -72,8 +101,11 @@ class Alignment(GenericAlignment):
 
             # is's ugly to have HTML here, but adding it in the template would awkward
 
+            # subdomain placeholder
+            formatted_gn = '-<br />'
+
             # helix number
-            formatted_gn = '<b>{:s}</b><br />'.format(helix_num)
+            formatted_gn += '<b>{:s}</b><br />'.format(helix_num)
             
             # sequence-based number
             seq_class = 'ali-td-generic-num-normal'
@@ -87,5 +119,5 @@ class Alignment(GenericAlignment):
             
             # structure-based number
             formatted_gn += 'x{:s}'.format(str_num)
-        
+
         return formatted_gn

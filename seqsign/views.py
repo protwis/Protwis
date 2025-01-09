@@ -181,6 +181,8 @@ def render_signature(request):
     request.session['signature'] = signature.prepare_session_data()
     request.session.modified = True
 
+    signature.segment_headers_to_hide = [seg for seg, posis in signature.common_segments.items() if len(posis)==0]
+
     return_html = render(
         request,
         'sequence_signature.html',

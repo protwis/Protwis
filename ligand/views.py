@@ -734,11 +734,16 @@ class LigandStructuralSearch(TemplateView):
                 no_results_msg = 'No results found.'
                 if cursor_results != []:
                     ligand_id = []
-                    similarities = {}
-                    for r in cursor_results:
-                        lig_id = r[0]
-                        ligand_id.append(lig_id)
-                        similarities[lig_id] = r[1]
+                    if search_type == 'similarity':
+                        similarities = {}
+                        for r in cursor_results:
+                            lig_id = r[0]
+                            ligand_id.append(lig_id)
+                            similarities[lig_id] = r[1]
+                    else:
+                        for r in cursor_results:
+                            lig_id = r[0]
+                            ligand_id.append(lig_id)
                     ps = AssayExperiment.objects.filter(ligand__in=ligand_id).prefetch_related('protein', 'ligand', 'ligand__ligand_type','protein__family')
                     ps = ps.order_by("ligand__id","protein__entry_name")
 

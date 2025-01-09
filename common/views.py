@@ -123,7 +123,7 @@ def getLigandCountTable():
     # data_table = None
     if data_table == None:
         proteins = Protein.objects.filter(sequence_type__slug="wt",
-                                          family__slug__startswith="00").prefetch_related(
+                                          family__slug__startswith="0").prefetch_related(
                                           # species__common_name="Human").prefetch_related(
             "family",
             "family__parent__parent__parent",
@@ -255,7 +255,7 @@ def getTargetTable():
     data_table = cache.get("target_table")
     if data_table == None:
         proteins = Protein.objects.filter(sequence_type__slug="wt",
-                                          family__slug__startswith="00",
+                                          family__slug__startswith="0",
                                           species__common_name="Human").prefetch_related(
             "family",
             "family__parent__parent__parent"
@@ -264,7 +264,7 @@ def getTargetTable():
         slug_list = [ p.family.slug for p in proteins ]
 
         # Acquire all targets that do not have a human ortholog
-        missing_slugs = list(Protein.objects.filter(sequence_type__slug="wt", family__slug__startswith="00")\
+        missing_slugs = list(Protein.objects.filter(sequence_type__slug="wt", family__slug__startswith="0")\
                                          .exclude(family__slug__in=slug_list)\
                                          .distinct("family__slug")\
                                          .values_list("family__slug", flat=True))
@@ -459,7 +459,7 @@ def getReferenceTable(pathway, subtype):
         proteins = Protein.objects.filter(
                                           entry_name__in=biased_entry_names,
                                           sequence_type__slug="wt",
-                                          family__slug__startswith="00").prefetch_related(
+                                          family__slug__startswith="0").prefetch_related(
             "family",
             "family__parent__parent__parent",
             "species"
@@ -673,7 +673,7 @@ class AbsReferenceSelectionTable(TemplateView):
     import_export_box = True
     default_species = 'Human'
     default_slug = '000'
-    default_subslug = '00'
+    default_subslug = '0'
 
     numbering_schemes = False
     search = False
@@ -787,7 +787,7 @@ class AbsTargetSelectionTable(TemplateView):
 
     default_species = 'Human'
     default_slug = '000'
-    default_subslug = '00'
+    default_subslug = '0'
 
     numbering_schemes = False
     search = False
@@ -909,7 +909,7 @@ class AbsTargetSelection(TemplateView):
     target_input = True
     default_species = 'Human'
     default_slug = '000'
-    default_subslug = '00'
+    default_subslug = '0'
     numbering_schemes = False
     search = True
     family_tree = True

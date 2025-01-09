@@ -57,7 +57,7 @@ class ReceptorListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Protein
-        fields = ('entry_name', 'name', 'accession', 'receptor_class', 'receptor_family', 'ligand_type', 'subfamily', 'receptor_class', 'endogenous_ligands', 'species')
+        fields = ('entry_name', 'name', 'accession', 'receptor_class', 'receptor_family', 'ligand_type', 'subfamily', 'receptor_class', 'endogenous_ligands', 'species', 'sequence')
 
 
 class SpeciesSerializer(serializers.ModelSerializer):

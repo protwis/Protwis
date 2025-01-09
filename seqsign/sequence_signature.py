@@ -58,6 +58,8 @@ class SequenceSignature:
         ])
         self.default_column = np.array([((y == '-') and 100) or 0 for y in AMINO_ACID_GROUPS.keys()])
 
+        self.segment_headers_to_hide = []
+
 
     def _assign_preferred_features(self, signature, segment, ref_matrix):
 
@@ -674,6 +676,7 @@ class SequenceSignature:
             'feats_cons_neg': self.features_consensus_neg,
             'a_pos': self.aln_pos,
             'a_neg': self.aln_neg,
+            'segment_headers_to_hide': self.segment_headers_to_hide,
         }
 
         return options

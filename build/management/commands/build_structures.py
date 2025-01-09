@@ -410,7 +410,7 @@ class Command(BaseBuild):
         elif structure.pdb_code.index=='8WU1':
             seq = seq[:-13]
         if structure.pdb_code.index in ['6NBI','6NBF','6NBH','6U1N','6M1H','6PWC','7JVR','7SHF','7EJ0','7EJ8','7EJA','7EJK','7VVJ','7TS0','7W6P','7W7E','8IRS',
-                                        '8FLQ','8FLR','8FLS','8FLU','8FU6','8IRU','7Y35','7Y36','8TB7','8SZI','8TZQ','8U02','8W8Q','8W8R','8W8S']:
+                                        '8FLQ','8FLR','8FLS','8FLU','8FU6','8IRU','7Y35','7Y36','8TB7','8SZI','8TZQ','8U02','8W8Q','8W8R','8W8S','8YN2']:
             pw2 = pairwise2.align.localms(parent_seq, seq, 3, -4, -3, -1)
         elif structure.pdb_code.index in ['6KUX','6KUY','6KUW','7SRS']:
             pw2 = pairwise2.align.localms(parent_seq, seq, 3, -4, -4, -1.5)
@@ -702,7 +702,22 @@ class Command(BaseBuild):
             temp_seq = temp_seq[:228]+'K'+temp_seq[228:243]+temp_seq[244:]
         elif structure.pdb_code.index=='9AVL':
             temp_seq = temp_seq[:123]+'N'+temp_seq[123:129]+temp_seq[130:]
-
+        elif structure.pdb_code.index=='8UXY':
+            ref_seq = ref_seq[:90]+ref_seq[92:108]+ref_seq[109:151]+ref_seq[152:200]+ref_seq[201:213]+ref_seq[214:]
+            temp_seq = temp_seq[:84]+'I'+temp_seq[87:105]+temp_seq[106:149]+temp_seq[150:202]+temp_seq[203:211]+temp_seq[212:271]+'-YS'+temp_seq[274:]
+        elif structure.pdb_code.index=='8UXV':
+            ref_seq = ref_seq[:144]+ref_seq[145:210]+ref_seq[211:266]+ref_seq[267:]
+            temp_seq = temp_seq[:146]+temp_seq[147:208]+temp_seq[209:268]+temp_seq[269:]
+        elif structure.pdb_code.index=='8WVV':
+            temp_seq = temp_seq[:542]+'S---'+temp_seq[546:673]+'P-----'+temp_seq[679:]
+        elif structure.pdb_code.index=='8XWP':
+            temp_seq = temp_seq[:235]+'L'+temp_seq[235:245]+temp_seq[246:]
+        elif structure.pdb_code.index=='8YN4':
+            temp_seq = temp_seq[:215]+'I'+temp_seq[215:226]+temp_seq[227:]
+        elif structure.pdb_code.index in ['9JR2']:
+            temp_seq = temp_seq[:5]+temp_seq[58:81]+temp_seq[5:58]+temp_seq[81:]
+        elif structure.pdb_code.index in ['9JR3']:
+            temp_seq = temp_seq[:4]+temp_seq[57:81]+temp_seq[4:57]+temp_seq[81:]
 
 
         for i, r in enumerate(ref_seq, 1): #loop over alignment to create lookups (track pos)
@@ -830,7 +845,7 @@ class Command(BaseBuild):
                                     elif residue.sequence_number!=wt_r.sequence_number:
                                         # print('WT pos not same pos, mismatch',residue.sequence_number,residue.amino_acid,wt_r.sequence_number,wt_r.amino_acid)
                                         wt_pdb_lookup.append(OrderedDict([('WT_POS',wt_r.sequence_number), ('PDB_POS',residue.sequence_number), ('AA',wt_r.amino_acid)]))
-                                        if structure.pdb_code.index not in ['4GBR','6C1R','6C1Q','7XBX','7F1Q','7ZLY','8JWY','8JWZ','8JMT','8TB7','8ITM','9D3G']:
+                                        if structure.pdb_code.index not in ['4GBR','6C1R','6C1Q','7XBX','7F1Q','7ZLY','8JWY','8JWZ','8JMT','8TB7','8ITM','9D3G','9D3E']:
                                             if residue.sequence_number in unmapped_ref:
                                                 # print('residue.sequence_number',residue.sequence_number,'not mapped though')
                                                 if residue.amino_acid == wt_lookup[residue.sequence_number].amino_acid:

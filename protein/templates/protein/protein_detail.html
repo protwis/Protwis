@@ -42,6 +42,35 @@
         <h4>DIAGRAMS</h4>
     </div>
     <div class="col-md-10">
+      {% if p.get_protein_class == 'Class B2 (Adhesion)' %}
+          <h4>GAIN domain</h4>
+          {{ p.get_snake_plot_GAIN }}
+          <p><div class="btn-group">
+              <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <span class="glyphicon glyphicon-download"></span> Download <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+              <li>
+                  <a href="javascript:saveSvgAsPng(document.getElementById('snakeplot2'), 'snake_{{ p.entry_name }}.png',
+                  {scale: 3});">PNG</a>
+              </li>
+              <li>
+                  <a href="javascript:saveSvgAsJpg(document.getElementById('snakeplot2'), 'snake_{{ p.entry_name }}.jpg',
+                  {scale: 3});">JPG</a>
+              </li>
+              <li>
+                  <a href="javascript:saveSvgAsTiff(document.getElementById('snakeplot2'), 'snake_{{ p.entry_name }}.tiff',
+                  {scale: 3});">TIFF</a>
+                  </a>
+              </li>
+              <li>
+              <a id="snake_svg_link2" href-lang="image/svg+xml" href="" download="snake_{{ p.entry_name }}">SVG</a>
+              </li>
+              </ul>
+          </div></p>
+      {% endif %}
+      <h4>7TM</h4>
       {{ p.get_snake_plot }}
       <p><div class="btn-group">
           <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown"
@@ -63,7 +92,7 @@
               </a>
           </li>
           <li>
-          <a id=snake_svg_link href-lang="image/svg+xml" href="" download="snake_{{ p.entry_name }}">SVG</a>
+          <a id="snake_svg_link" href-lang="image/svg+xml" href="" download="snake_{{ p.entry_name }}">SVG</a>
           </li>
           </ul>
       </div></p>

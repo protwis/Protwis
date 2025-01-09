@@ -78,7 +78,7 @@ class ReceptorList(generics.ListAPIView):
     \n/receptorlist/
     """
 
-    queryset = Protein.objects.filter(accession__isnull=False, parent__isnull=True, family__slug__startswith="00", source__name="SWISSPROT").prefetch_related('family','endogenous_gtp_set')
+    queryset = Protein.objects.filter(accession__isnull=False, parent__isnull=True, family__slug__startswith="0", source__name="SWISSPROT").prefetch_related('family','endogenous_gtp_set')
     serializer_class = ReceptorListSerializer
 
 class ProteinFamilyList(generics.ListAPIView):
@@ -524,7 +524,7 @@ class StructureAccessionHuman(views.APIView):
     """
 
     def get(self, request):
-        unique_slugs = list(Structure.objects.filter(protein_conformation__protein__family__slug__startswith="00").exclude(structure_type__slug__startswith='af-')\
+        unique_slugs = list(Structure.objects.filter(protein_conformation__protein__family__slug__startswith="0").exclude(structure_type__slug__startswith='af-')\
             .order_by('protein_conformation__protein__family__slug').values_list('protein_conformation__protein__family__slug', flat=True).distinct())
         accession_codes = list(Protein.objects.filter(family__slug__in=unique_slugs, sequence_type__slug='wt', species__latin_name='Homo sapiens')\
                             .values_list('entry_name', flat=True))

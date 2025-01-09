@@ -119,7 +119,7 @@
                 scrollX:        true,
                 scrollCollapse: true,
                 paging:         false,
-                "order": [[1,'asc'],[3,'asc']],
+                "order": [[4,'asc'],[5,'asc']],
                   columnDefs: [
                     { targets: 'no-sort', orderable: false }
 
@@ -138,17 +138,6 @@
 
             yadcf.init(oTable,
                 [
-                    {
-                        column_number : 1,
-                        filter_type: "multi_select",
-                        select_type: 'select2',
-                        column_data_type: "html",
-                        filter_default_label: "Model",
-                        filter_reset_button_text: false,
-                        select_type_options: {
-                            width: '100px',
-                        }
-                    },
                     {
                         column_number : 2,
                         filter_type: "range_date",
@@ -436,9 +425,13 @@
                 <tr model_id='{{model.pk}}'>
                     <td class="text-center"><input class="alt" type="checkbox" id="{{ model.pk }}"></td>
                     {% if model.protein.accession %}
-                        <td><a href="homology_models/{{ model.protein.entry_name }}_{{ model.state.slug }}" target="_blank">{{ model.protein.family.name|safe }}</a></td>
+                        <td><a target="_blank" href="homology_models/{{ model.protein.entry_name }}_{{ model.state.slug }}">
+                            <img width="14px" height="20px" class="model-link" src="{% static 'home/images/gpcr_structure_logo.png' %}">
+                        </a></td>
                     {% else %}
-                        <td><a href="refined/{{ model.protein.entry_name|upper }}" target="_blank">{{ model.protein.family.name|safe }}</a></td>
+                        <td><a target="_blank" href="refined/{{ model.protein.entry_name|upper }}">
+                            <img width="14px" height="20px" class="model-link" src="{% static 'home/images/gpcr_structure_logo.png' %}">
+                        </a></td>
                     {% endif %}
                     <td>{{ model.version|date:"Y-m-d" }}</td>
                     <td>{{ model.state.name }}</td>
