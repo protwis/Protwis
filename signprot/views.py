@@ -475,7 +475,7 @@ class LazyDataLoader:
 
     def __len__(self):
         return len(self._load_data())
-    
+
 def CouplingHandler(request):
     domain = current_site(request)
     origin = domain['current_site']
