@@ -227,18 +227,6 @@ class PhosphorylationBrowser(TemplateView):
             queryset=WebLink.objects.filter(web_resource__id__in=[8, 5]).select_related('web_resource'),
             to_attr='links')
 
-        # Fetch proteins with necessary related objects
-        # prots = Protein.objects.filter(
-        #     proteincouplings__g_protein__parent__name=self.signprot
-        # ).distinct().select_related(
-        #     'family', 'family__parent', 'family__parent__parent', 'family__parent__parent__parent'
-        # ).prefetch_related(
-        #     'proteinconformation_set__residue_set__protein_segment',
-        #     protein_couplings_prefetch,
-        #     web_links_prefetch
-        # ).only(
-        #     'entry_name', 'name', 'family',
-        # )
         prots = Protein.objects.filter(
             (Q(family__parent__parent__parent__slug__startswith='001')
             | Q(family__parent__parent__parent__slug__startswith='002')
