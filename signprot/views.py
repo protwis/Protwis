@@ -10,7 +10,6 @@ from django.utils.text import slugify
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from django.utils.safestring import mark_safe
 
 from protwis.context_processors import current_site
 from common import definitions
@@ -131,7 +130,7 @@ class TargetSelection(AbsTargetSelection):
             'url': '#',
             'color': 'success',
         },
-    }        
+    }
 
 class PhosphorylationBrowser(TemplateView):
     template_name = 'signprot/phosphorylation_sites.html'
@@ -242,13 +241,13 @@ class PhosphorylationBrowser(TemplateView):
         # )
         prots = Protein.objects.filter(
             (Q(family__parent__parent__parent__slug__startswith='001')
-            | Q(family__parent__parent__parent__slug__startswith='002') 
+            | Q(family__parent__parent__parent__slug__startswith='002')
             | Q(family__parent__parent__parent__slug__startswith='003')
             | Q(family__parent__parent__parent__slug__startswith='004')
             | Q(family__parent__parent__parent__slug__startswith='005')
             | Q(family__parent__parent__parent__slug__startswith='006')
             | Q(family__parent__parent__parent__slug__startswith='010')
-            | Q(family__parent__parent__parent__slug__startswith='009')) 
+            | Q(family__parent__parent__parent__slug__startswith='009'))
             & Q(entry_name__endswith='_human')
         ).distinct().select_related(
             'family', 'family__parent', 'family__parent__parent', 'family__parent__parent__parent'
@@ -288,7 +287,7 @@ class PhosphorylationBrowser(TemplateView):
             for coupling in getattr(protein, 'filtered_couplings', []):
                 # Use the g_protein_subunit_entry_name directly
                 label = (coupling.g_protein_subunit.entry_name, coupling.variant)
-                
+
                 if coupling.emax is not None:
                     coupling_data['emax'][label] = coupling.emax
                 if coupling.pec50 is not None:
@@ -1009,7 +1008,7 @@ class CouplingBrowser_deprecated(TemplateView):
                     "pec50": round(pair.pec50, 1),
                     "emax": round(pair.emax)
                     }
-            except Exception as e:
+            except:
                 exp_values = {
                     "logemaxec50": 0,
                     "pec50": 0,
