@@ -57,14 +57,13 @@ def pub_out(objs):
     # else:
     #     return 'weird {}'.format(objs)
 
-
 @register.filter
 def dict_get(dictionary, key):
     try:
         return dictionary.get(key, '')
     except (TypeError, AttributeError):
         return ''
-    
+
 @register.filter
 def remove_prefix(value):
     prefixes = ['Psites_', 'Osites_', 'Plong_', 'Olong_']

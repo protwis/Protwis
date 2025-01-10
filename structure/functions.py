@@ -1236,7 +1236,6 @@ class ParseAFComplexModels():
                     beta_gamma = False
 
             else:
-                model = 'af-arrestin'
                 beta_gamma = False
 
             self.complexes[f'{receptor}{peptide}-{signprot}'] = {
