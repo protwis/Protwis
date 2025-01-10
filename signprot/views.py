@@ -334,7 +334,19 @@ class PhosphorylationBrowser(TemplateView):
                 uniprot_link = uniprot_links[1]
             except IndexError:
                 uniprot_link = uniprot_links[0]
-            return mark_safe(f'<a href="{uniprot_link.index}" target="_blank">{protein.entry_name.split("_")[0].upper()}</a>')
+
+            # Grab the base URL (which should contain `$index`)
+            uniprot_url = uniprot_link.web_resource.url
+            # Replace `$index` with the actual uniprot index
+            uniprot_url = uniprot_url.replace('$index', uniprot_link.index)
+            uniprot_display_name = protein.entry_name.split("_")[0].upper()
+            uniprot_display_name_safe = format_html(uniprot_display_name)
+
+            return format_html(
+                '<a href="{}" target="_blank">{}</a>',
+                uniprot_url,
+                uniprot_display_name_safe
+            )
         else:
             return protein.entry_name.split("_")[0].upper()
 
@@ -344,7 +356,15 @@ class PhosphorylationBrowser(TemplateView):
         if gtodb_links:
             gtodb_link = gtodb_links[0]
             display_name = protein.name.split("_")[0].replace(" receptor", "").replace("-adrenoceptor", "")
-            return mark_safe(f'<a href="{gtodb_link.index}" target="_blank">{display_name}</a>')
+            display_name_safe = format_html(display_name)
+
+            gtodb_url = gtodb_link.web_resource.url
+            gtodb_url = gtodb_url.replace('$index', gtodb_link.index)
+            return format_html(
+                '<a href="{}" target="_blank">{}</a>',
+                gtodb_url,
+                display_name_safe
+            )
         else:
             return protein.name.replace(" receptor", "").replace("-adrenoceptor", "")
 
