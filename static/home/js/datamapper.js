@@ -1396,19 +1396,14 @@ function RenderListPlot_Labels(data, category_data, location, styling_option, La
         if (Data_styling[column].Data === "Yes" && Data_styling[column].Datatype === 'Continuous') {
             number_of_bar_legends++;
         }
-
-        if (!Layer2_isChecked && !Layer3_isChecked) {
-            for (const ligandKey in ligandTypeDict) {
-                ligandTypeDict[ligandKey].forEach(familyObj => {
-                    familyObj.receptors.forEach(receptor => {
-                        final_array.push(receptor); // Add sorted Receptors
-                        category_array.push("Receptor"); // Add "Receptor" category
-                    });
-                });
-            }
+    });
+    let minimum_width = 0;
+    if (number_of_bar_legends > 0) {
+        minimum_width = 230*number_of_bar_legends+margin.left+margin.right;
+        if (width < minimum_width) {
+            width = minimum_width;
         }
     }
-
 
     // Initialize SVG container
     const svg = d3.select(`#${location}`)
@@ -1697,18 +1692,6 @@ function data_visualization(data, category_data, location, Layout_dict, data_sty
             default:
                 console.log('Unknown shape type');
         }
-
-        // Sort the receptor families
-        allReceptorFamilies.sort((a, b) => a.family.localeCompare(b.family));
-
-        allReceptorFamilies.forEach(familyObj => {
-            final_array.push(familyObj.family); // Add ReceptorFamily
-            category_array.push("ReceptorFamily"); // Add "ReceptorFamily" category
-            familyObj.receptors.forEach(receptor => {
-                final_array.push(receptor);
-                category_array.push("Receptor"); // Add "Receptor" category
-            });
-        });
     }
 
     // Function to handle column breaks
@@ -1755,8 +1738,6 @@ function data_visualization(data, category_data, location, Layout_dict, data_sty
 
         return color;
     }
-    return Col_spacing_dict;
-}
 
     // ###############################
     // ## Iterate through data rows ##
@@ -1809,27 +1790,6 @@ function data_visualization(data, category_data, location, Layout_dict, data_sty
                     const shape_color = Col2_data ? getShapeColor('Col2', Col2_data) : 'black';
                     addShape(Shape_list.includes(Col2_shape) ? Col2_shape : 'circle', margin.left + xOffset + col2_XoffSet, yOffset - 10, 6, shape_color);
                 }
-            });
-        } else {
-            // General label handling for other categories
-            if (category === 'Class') {
-                label = label_key.split(" (")[0]; // Trim Class
-            }
-
-            // Render text for non-receptor categories
-            svg.append('text')
-                .attr('x', margin.left + xOffset)
-                .attr('y', yOffset)
-                .attr('class', category)
-                .style('dominant-baseline', 'middle') // Set vertical alignment
-                .style('font-weight', bold ? 'bold' : 'normal')
-                .style('font-style', italic ? 'italic' : 'normal')
-                .style('text-decoration', underline ? 'underline' : 'none')
-                .style('font-size', fontSize)
-                .style('fill', color)
-                .text(label);
-        }
-    }
 
                 // ### Column 3 ###
                 if (Col3_data_checker && (Col3_shape || Col3_data)) {
@@ -2639,6 +2599,7 @@ function GPCRome_formatTextWithHTML(text, Family_list) {
     return formattedText;
 }
 
+
 // Draw / generate the GPCRome plot
 function Draw_GPCRomes(layout_data, fill_data, location, GPCRome_styling, odorant = false) {
 
@@ -3041,8 +3002,6 @@ function Draw_GPCRomes(layout_data, fill_data, location, GPCRome_styling, odoran
                                 // .style("font-weight", "bold")
                                 .style("font-family", Font_family)
                                 .style("font-size",family_fontsize);
-                                
-
 
 
 

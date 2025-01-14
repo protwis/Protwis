@@ -1178,12 +1178,6 @@ var signprotmat = {
       each_res
         .append("rect")
         .attr("class", "res_rect")
-        // COLORED RESIDUE INTERACTION
-        // .style("fill", function (d) {
-        //   return typeof d.int_ty !== "undefined"
-        //     ? colScale(d.int_ty[0])
-        //     : non_int_col;
-        // })
         .style("fill", function (d) {
           var col = signprotmat.d3.resScaleColor(d.rec_aa); // Assuming d.rec_aa is the residue data for receptor
           if (typeof col !== "undefined") {
@@ -1281,10 +1275,6 @@ var signprotmat = {
       each_res
         .append("rect")
         .attr("class", "res_rect_vertical")
-        // COLORED RESIDUE INTERACTION NOT
-        // .style("fill", function (d) {
-        //   return colScale(d.int_ty[0]);
-        // })
         .style("fill", function (d) {
           var col = signprotmat.d3.resScaleColor(d.sig_aa); // Assuming d.rec_aa is the residue data for receptor
           if (typeof col !== "undefined") {

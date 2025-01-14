@@ -226,25 +226,37 @@ class PhosphorylationBrowser(TemplateView):
             'web_links',
             queryset=WebLink.objects.filter(web_resource__id__in=[8, 5]).select_related('web_resource'),
             to_attr='links')
+        
+        class_names = [
+            "Class A (Rhodopsin)",
+            "Class B1 (Secretin)",
+            "Class B2 (Adhesion)",
+            "Class C (Glutamate)",
+            "Class D1 (Ste2-like fungal pheromone)",
+            "Class F (Frizzled)",
+            "Class T2 (Taste 2)",
+            "Other GPCRs",
+        ]
 
-        prots = Protein.objects.filter(
-            (Q(family__parent__parent__parent__slug__startswith='001')
-            | Q(family__parent__parent__parent__slug__startswith='002')
-            | Q(family__parent__parent__parent__slug__startswith='003')
-            | Q(family__parent__parent__parent__slug__startswith='004')
-            | Q(family__parent__parent__parent__slug__startswith='005')
-            | Q(family__parent__parent__parent__slug__startswith='006')
-            | Q(family__parent__parent__parent__slug__startswith='010')
-            | Q(family__parent__parent__parent__slug__startswith='009'))
-            & Q(entry_name__endswith='_human')
-        ).distinct().select_related(
-            'family', 'family__parent', 'family__parent__parent', 'family__parent__parent__parent'
-        ).prefetch_related(
-            'proteinconformation_set__residue_set__protein_segment',
-            protein_couplings_prefetch,
-            web_links_prefetch
-        ).only(
-            'entry_name', 'name', 'family',
+        prots = (
+            Protein.objects
+            .filter(
+                family__parent__parent__parent__name__in=class_names,
+                entry_name__endswith="_human",
+            )
+            .distinct()
+            .select_related(
+                "family",
+                "family__parent",
+                "family__parent__parent",
+                "family__parent__parent__parent",
+            )
+            .prefetch_related(
+                "proteinconformation_set__residue_set__protein_segment",
+                protein_couplings_prefetch,
+                web_links_prefetch,
+            )
+            .only("entry_name", "name", "family")
         )
 
         i = 0
@@ -1800,8 +1812,6 @@ def StructureInfo(request, pdbname):
 # @cache_page(60*60*24*2)
 def signprotdetail(request, slug):
     # get protein
-    print("CALLEEEED")
-
     slug = slug.lower()
     p = Protein.objects.prefetch_related('web_links__web_resource').get(entry_name=slug, sequence_type__slug='wt')
 

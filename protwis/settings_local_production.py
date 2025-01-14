@@ -4,7 +4,7 @@
 # Site specific constants
 SITE_NAME = 'gpcr' # used for site specific files
 SITE_TITLE = 'GPCRdb' # for display in templates
-DATA_DIR = '/Users/vtk842/' + SITE_NAME
+DATA_DIR = '/protwis/data/protwis/' + SITE_NAME
 BUILD_CACHE_DIR = DATA_DIR + '/cache'
 DEFAULT_NUMBERING_SCHEME = 'gpcrdb'
 DEFAULT_PROTEIN_STATE = 'inactive'

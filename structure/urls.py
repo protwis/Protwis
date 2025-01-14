@@ -10,9 +10,7 @@ from django.views.decorators.cache import cache_page
 urlpatterns = [
     url(r'^$', cache_page(60*60*24)(StructureBrowser.as_view()), name='structure_browser'),
     # url(r'^$', StructureBrowser.as_view(), name='structure_browser'),
-    # url(r'^g_protein_structure_browser$', cache_page(60*60*24)(EffectorStructureBrowser.as_view(effector='gprot')), name='g_protein_structure_browser'), # ORIGINAL
-    url(r'^g_protein_structure_browser$', EffectorStructureBrowser.as_view(effector='gprot'), name='g_protein_structure_browser'), # ERASE
-    # url(r'^g_protein_structure_browser$', EffectorStructureBrowser.as_view(effector='gprot'), name='g_protein_structure_browser'),
+    url(r'^g_protein_structure_browser$', cache_page(60*60*24)(EffectorStructureBrowser.as_view(effector='gprot')), name='g_protein_structure_browser'),
     url(r'^arrestin_structure_browser$', cache_page(60*60*24)(EffectorStructureBrowser.as_view(effector='arrestin')), name='arrestin_structure_browser'),
     path('structure_similarity_search', StructureBlastView.as_view(), name='structure-similarity-search'),
     url(r'^browser$', RedirectBrowser, name='redirect_browser'),
