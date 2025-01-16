@@ -72,20 +72,4 @@ urlpatterns = [
     url(r'^pdb/(?P<pdbname>\w+)/ligand/(?P<ligand>.+)$', ServePdbLigandDiagram, name='structure_serve_pdb_ligand'),
     url(r'^complex_models/(?P<header>\w+)$',cache_page(60*60*24*7)(ComplexModelDetails), name='complex_model_details'),
     url(r'^complex_models/view/(?P<modelname>\w+)$', ServeComplexModDiagram, name='complexmod_serve_view'),
-    ##### COMMENTED PATHS #####
-    # url(r'^complex_models/(?P<header>\w+)$',ComplexModelDetails, name='complex_model_details'),
-    # url(r'^complex_models/view/(?P<modelname>\w+)-(?P<signprot>\w+)$', ServeComplexModDiagram, name='complexmod_serve_view'),
-    # url(r'^complex_models/(?P<modelname>\w+)-(?P<signprot>\w+)$', cache_page(60*60*24*7)(ComplexModelDetails), name='complex_model_details'),
-    # url(r'^complex_models/(?P<modelname>\w+)-(?P<signprot>\w+)/download_csv$', SingleComplexModelDownload, {'csv':True}, name='single_complex_model_download'),
-    # url(r'^homology_models/(?P<modelname>\w+)_(?P<state>\w+)/download_csv$', SingleModelDownload, {'csv':True}, name='single_model_download'),
-    # url(r'^homology_models/(?P<modelname>\w+)_(?P<state>\w+)$', HomologyModelDetails, name='homology_model_details'),
-    #    url(r'^webform$', views.webform, name='webform'),
-    #    url(r'^webformdata$', views.webformdata, name='webformdata'),
-    #    url(r'^construct$', views.webform_two, name='webform_two'),
-    #    url(r'^construct/(?P<slug>[\w_]+)$', views.webform_two, name='webform_two'),
-    #    url(r'^webform/(?P<slug>[\w_]+)$', views.webform_download, name='webform_download'),
-    #    url(r'^fragment_superposition_index', FragmentSuperpositionIndex.as_view(), name='fragment_superposition'),
-    #    url(r'^fragment_superposition_results', FragmentSuperpositionResults.as_view(), name='fragment_superposition'),
-    # url(r'^pdb_download_index$', PDBClean.as_view(), name='pdb_download'),
-    ###########################
 ]

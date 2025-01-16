@@ -19,7 +19,6 @@ from collections import defaultdict, OrderedDict
 
 from django.middleware.csrf import get_token
 from django.shortcuts import render, redirect
-
 from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 from django.views.generic import TemplateView, DetailView, View
 from django.db import connection
@@ -119,10 +118,12 @@ class LigandNameSelection(AbsTargetSelection):
     description = 'If searching for multiple ligands, separate queries by new lines.'
 
     buttons = {
+
         'continue' : {
             'label' : 'Search',
             'onclick' : "submitSelectionLigandBulkSearch('/ligand/ligand_bulk_search')",
             'color' : 'success',
+
             },
         'no_box' : True,
         }
@@ -144,6 +145,7 @@ class LigandNameSelection(AbsTargetSelection):
                     'id': lid['web_resource_id'],
                     'slug': slug,
                     }
+
                 if slug == 'chembl_ligand':
                     name = 'ChEMBL compound'
 
@@ -162,6 +164,7 @@ class LigandNameSelection(AbsTargetSelection):
 
         context['selection_ligand_bulk_search_parameters'] = getLigandBulkSearchParameters(self.request)
         context['selection_ligand_chemical_search_type_parameters'] = getLigandChemicalStructureSearchParameters(self.request)
+
         msg = self.request.session.pop('ligand_bulk_search_error_msg',None)
         if msg is not None:
             context['ligand_bulk_search_error_msg'] = msg
@@ -171,12 +174,14 @@ class LigandNameSelection(AbsTargetSelection):
         msg = self.request.session.pop('ligand_bulk_search_by_names_error_msg',None)
         if msg is not None:
             context['ligand_bulk_search_by_names_error_msg'] = msg
+
         msg = self.request.session.pop('ligand_bulk_search_error_msg',None)
         if msg is not None:
             context['ligand_bulk_search_error_msg'] = msg
         msg = self.request.session.pop('ligand_bulk_search_by_id_error_msg',None)
         if msg is not None:
             context['ligand_bulk_search_by_id_error_msg'] = msg
+
         context['ligand_structural_search_parameters'] = getLigandStructuralSearchParameters(self.request)
         context['ligand_structural_search_parameters']['similarity_threshold'] = '%.2f' % context['ligand_structural_search_parameters']['similarity_threshold']
         msg = self.request.session.pop('ligand_structural_search_error_msg',None)
@@ -220,14 +225,16 @@ def validate_SMARTS(smarts,smiles_only=False):
             try:
                 if smiles_only:
                     cursor.execute('SELECT mol_from_smiles(%s);', [smarts])
+
                 else:
                     cursor.execute('SELECT qmol(%s);', [smarts])
+
             except DataException:
                 msg = invalid_smarts_msg
                 error = True
                 return (error, msg)
             r = cursor.fetchall()
-  
+
             if len(r) < 1:
                 msg = invalid_smarts_msg
                 error = True
@@ -236,6 +243,7 @@ def validate_SMARTS(smarts,smiles_only=False):
                 msg = invalid_smarts_msg
                 error = True
                 return (error, msg)
+
         return (error, msg)
 
 class ReadInputLigandBulkSearch(View):
@@ -252,6 +260,7 @@ class ReadInputLigandBulkSearch(View):
 
     def validate_SMARTS(self,smarts,smiles_only=False):
         return validate_SMARTS(smarts,smiles_only=smiles_only)
+
     def get(self, request, *args, **kwargs):
         OK_request_dict = self.OK_request_dict.copy()
         bad_request_dict = self.bad_request_dict.copy()
@@ -307,6 +316,7 @@ class ReadInputLigandBulkSearch(View):
                     return JsonResponse(bad_request_dict,status=400,reason='Bad Request')
             else:
                 search_params_data[key] = request.POST.get(key,None)
+
         if search_type == 'smiles' or search_type == 'smarts':
             for i,smiles in enumerate(entries):
                 error, msg = self.validate_SMARTS(smiles,smiles_only = search_type == 'smiles')
@@ -340,6 +350,7 @@ class ReadInputLigandBulkSearch(View):
             raise ValidationError('Unknown ligand bulk search parameter: search_type="%s"' % str(search_type))
         if search_type != 'name':
             search_params_data['search_entries'] = entries
+
         stereochemistry = search_params_data['stereochemistry']
         try:
             stereochemistry_lower =  stereochemistry.lower()
@@ -364,6 +375,9 @@ class LigandBulkSearch(TemplateView):
     template_name = 'target_details.html'
 
     def get_context_data(self, **kwargs):
+
+
+
         cache_key = False
         mode = 'compact'
         context = super().get_context_data(**kwargs)
@@ -372,6 +386,7 @@ class LigandBulkSearch(TemplateView):
         if len(entries) > 1:
             self.request.session["selection_ligand_bulk_search_search_entries"] = []
             self.request.session.modified = True
+
         search_type = param_dict['search_type']
         search_text = param_dict['search_text']
         if len(entries) == 0 and search_type != 'name':
@@ -382,6 +397,7 @@ class LigandBulkSearch(TemplateView):
                 session_key = 'ligand_bulk_search_error_msg'
             elif search_type == 'names':
                 session_key = 'ligand_bulk_search_by_names_error_msg'
+
             self.request.session[session_key] = 'Empty search input.'
             self.request.session.modified = True
             return context
@@ -413,6 +429,7 @@ class LigandBulkSearch(TemplateView):
                     sql_final_query = 'SET SESSION rdkit.do_chiral_sss=%s; '+sql_query
                     cursor.execute(sql_final_query,[str(stereochemistry)]+entries)
                     cursor_results = cursor.fetchall()
+
         elif search_type == 'inchikey':
             if len(entries) <= 1:
                 inchikey = entries[0]
@@ -421,6 +438,7 @@ class LigandBulkSearch(TemplateView):
             if len(entries) <= 1:
                 id = entries[0]
                 cache_key = "ligand_bulk_search_" + ",".join([search_type,str(id),mode])
+
         elif search_type == 'name':
             cache_key = "ligand_bulk_search_" + ",".join([search_type,search_text,mode])
         elif search_type == 'names':
@@ -437,6 +455,7 @@ class LigandBulkSearch(TemplateView):
             if not(cache_key != False and cache.has_key(cache_key)):
 
                 if search_type == 'smiles' or search_type == 'smarts':
+
                     if cursor_results != []:
                         ligand_id = [x[0] for x in cursor_results]
                         if len(entries) == 1 and len(ligand_id) == 1:
@@ -461,6 +480,7 @@ class LigandBulkSearch(TemplateView):
                             cache.set(cache_key, context, 60*60*24*7)
                             return context
                     ps = AssayExperiment.objects.filter(ligand__inchikey__in=entries).prefetch_related('protein', 'ligand', 'ligand__ligand_type','protein__family')
+
                 elif search_type == 'id':
                     fields_cache_key = 'SelectionLigandBulkSearchByNameFields'
                     if not(cache.has_key(fields_cache_key)):
@@ -483,6 +503,7 @@ class LigandBulkSearch(TemplateView):
 
                         ps = AssayExperiment.objects.filter(ligand__id__in=entries).prefetch_related('protein', 'ligand', 'ligand__ligand_type','protein__family')
                     else:
+
                         if len(entries) == 1:
                             ps = LigandID.objects.filter(web_resource_id=web_resource_slug_2_id[field],index=entries[0]).values('ligand_id')
                             if len(ps) == 1:
@@ -490,11 +511,9 @@ class LigandBulkSearch(TemplateView):
                                 context['redirect_to'] = '{:d}/info'.format(ps[0]['ligand_id'])
                                 cache.set(cache_key, context, 60*60*24*7)
                                 return context
-
                         webrq = Q(ligand__ids__web_resource_id=web_resource_slug_2_id[field])
                         qindex = Q(ligand__ids__index__in=entries)
                         ps = AssayExperiment.objects.filter(webrq & qindex).prefetch_related('protein', 'ligand', 'ligand__ligand_type','protein__family')
-
                 elif search_type == 'name':
                     ps = AssayExperiment.objects.filter(ligand__name__icontains=search_text).prefetch_related('protein', 'ligand', 'ligand__ligand_type','protein__family')
                 elif search_type == 'names':
@@ -544,9 +563,7 @@ class LigandBulkSearch(TemplateView):
                 elif search_type == 'names':
                     session_key = 'ligand_bulk_search_by_names_error_msg'
                 elif search_type == 'name':
-
                     session_key = 'ligand_bulk_search_by_name_error_msg'
-
                 self.request.session[session_key] = 'Too many records (max. %d). Try again with more specific search criteria.' % (MAX_RECORDS)
                 self.request.session.modified = True
                 return context
@@ -592,6 +609,7 @@ class ReadInputLigandStructuralSearch(View):
 
     def validate_SMARTS(self,smarts,smiles_only=False):
         return validate_SMARTS(smarts,smiles_only=smiles_only)
+
     def get(self, request, *args, **kwargs):
         OK_request_dict = self.OK_request_dict.copy()
         bad_request_dict = self.bad_request_dict.copy()
@@ -617,6 +635,7 @@ class ReadInputLigandStructuralSearch(View):
         search_params_data = {}
         for key in self.search_params_data_keys:
             search_params_data[key] = request.POST.get(key,None)
+
         search_type = search_params_data['search_type']
         smarts_enabled = False
         if search_type == 'similarity':
@@ -664,6 +683,7 @@ class ReadInputLigandStructuralSearch(View):
                 # msg = 'Similarity threshold must be a number larger than 0.'
                 request.session['ligand_structural_search_error_msg'] = msg
                 similarity_threshold_error = True
+
         if similarity_threshold_error:
             if search_type_similarity:
                 bad_request_dict['msg'] = msg
@@ -706,6 +726,7 @@ class LigandStructuralSearch(TemplateView):
                     sql_query = str(q.query).replace('%','%%').replace(string_to_replace_by,'%s')
                     cursor.execute('SET SESSION rdkit.tanimoto_threshold = %s; ' + sql_query, [similarity_threshold,smiles,smiles,smiles])
                     cursor_results = cursor.fetchall()
+
 
             elif search_type == 'substructure':
                 if param_dict['stereochemistry']:
@@ -777,7 +798,6 @@ class LigandStructuralSearch(TemplateView):
                 self.request.session['ligand_structural_search_error_msg'] = 'Too many records (max. %d). Try again with more specific search criteria.' % (MAX_RECORDS)
                 self.request.session.modified = True
                 return context
-
 
         context['mode'] = mode
         cache.set(cache_key, context, 60*60*24*7)
@@ -1006,7 +1026,6 @@ def LigandListDetails(mode, ps,ligand_search=False,ligand_similarities=None):
                 assay = assay_conversion[record.assay_type]
                 if protein not in data_parsed.keys():
                     data_parsed[protein] = {}
-
                 if record.source not in data_parsed[protein].keys():
                     data_parsed[protein][record.source] = {}
                 if assay not in data_parsed[protein][record.source].keys():

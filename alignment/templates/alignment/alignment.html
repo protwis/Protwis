@@ -113,7 +113,6 @@
                                     RESIDUE PROPERTIES & LENGTH
                                 </td>
                             </tr>
-
                             {% for feature in a.features_combo %}
                             <tr>
                                 <!-- <td class="ali-td ali-td-first-col">
@@ -209,7 +208,6 @@
                                         <td class="ali-td">&nbsp;</td>
                                     {% endfor %}
                                 </tr>
-
                                 {% endfor %}
 
                                 <!-- sequence lines -->
@@ -345,12 +343,9 @@
                                 <tr>
                                     {% for s, num in segments.items %}
                                         {% for n, dn in num.items %}
-                                            
                                                 <td class="ali-td-generic-num">{{ dn|safe }}</td>
-                                            
                                             {% endfor %}
                                         <td class="ali-td">&nbsp;</td>
-
                                     {% endfor %}
                                 </tr>
                                 {% endfor %}

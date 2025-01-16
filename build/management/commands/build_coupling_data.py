@@ -37,7 +37,6 @@ class Command(BaseCommand):
         self.create_iuphar_couplings()
         test_model_updates(self.all_models, self.tracker, check=True)
         self.logger.info('PASS: create_iuphar_couplings')
-        print('PASS: create_iuphar_couplings')
         self.create_data_couplings()
         test_model_updates(self.all_models, self.tracker, check=True)
         self.logger.info('PASS: create_data_couplings')
@@ -45,11 +44,9 @@ class Command(BaseCommand):
     def purge_coupling_data(self):
         """DROP data from the protein_gprotein_pair table."""
         try:
-            print('PURGING')
             ProteinCouplings.objects.all().delete()
         except Exception as msg:
             self.logger.warning('Existing protein couplings cannot be deleted' + str(msg))
-            print(f'Existing protein couplings cannot be deleted {str(msg)}')
 
     def create_iuphar_couplings(self, filenames=False):
         """
@@ -57,7 +54,6 @@ class Command(BaseCommand):
 
         The function reads a iupharcoupling_file, which comes from parsing the Guide_to_Pharmacology.
         """
-        print('create_iuphar_couplings')
         self.logger.info('CREATING: IUPHAR couplings')
         # print("PROCESSING: IUPHAR couplings")
 
@@ -109,7 +105,6 @@ class Command(BaseCommand):
                                       'G protein independent mechanism']:  # skip bad ones
                                 continue
                             g = ProteinFamily.objects.get_or_create(name=translation[gp][0], slug=translation[gp][1])[0]
-                            # print(p, g)
                             gpair = ProteinCouplings(protein=p, g_protein=g, transduction='primary', source=source)
                             gpair.save()
 
@@ -325,7 +320,6 @@ class Command(BaseCommand):
     def read_new_coupling(self, filepath):
         pe = ParseExcel()
         data_raw = pe.parse_excel(filepath, True)
-        print(f'Data Raw: {data_raw}')
 
         ligands = self.assess_ligand_id(pe.workbook)
 
@@ -346,9 +340,7 @@ class Command(BaseCommand):
         data = {}
         for source, source_metadata in data_raw['Metadata'].items():
             data[source] = {'metadata':source_metadata}
-            print(f'source_metadata: {source_metadata}')
             for receptor, row in data_raw[source].items():
-                print(f' RECEPTOR row: {row}')
                 if 'Receptor (UniProt)' in row:
                     receptor = row['Receptor (UniProt)']
                 elif 'UniProt' in row:
@@ -363,8 +355,6 @@ class Command(BaseCommand):
                 for sp_key, sp in signprot_dict.items():
                     ### Skip is G prot subtype not in this source
                     if sp_key not in row:
-                        print(f' Not in Row: {sp_key}')
-                        print(f'Row Info: {row}')
                         continue
                     data[source][receptor][sp_key] = {}
                     ### Family data
@@ -375,38 +365,6 @@ class Command(BaseCommand):
                     ###### Family values
                     if '{}-fam'.format(sp.family.parent.name) in row and source_metadata['Parameter']=='log(Emax/EC50)':
                         data[source][receptor][sp_key]['fam_logemaxec50'] = round(row['{}-fam'.format(sp.family.parent.name)],1)
-
-                        # try:
-                        #     data[source][receptor][sp_key]['fam_emax'] = round(float(row[f'Emax {sp_key.replace(" ", "")}']), 1)
-                        # except:
-                        #     new_a = row[f'Emax {sp_key.replace(" ", "")}']
-                        #     print(f'ERROR new_a: {new_a}, {sp.family.parent.name}, sp_key: {sp_key}')
-                        #     data[source][receptor][sp_key]['fam_emax'] = 0
-                        # try:
-                        #     data[source][receptor][sp_key]['fam_pec50'] = round(float(row[f'pEC50 {sp_key.replace(" ","")}']), 1)
-                        # except:
-                        #     new_b = row[f'pEC50 {sp_key.replace(" ", "")}']
-                        #     print(f'ERROR new_b: {new_b}, {sp.family.parent.name}, spkey: {sp_key}')
-                        #     data[source][receptor][sp_key]['fam_pec50'] = 0
-                        # a = row[f'Emax {sp_key.replace(" ", "")}']
-                        # print(f'Emax_score: {sp_key}')
-
-                    # if sp_key in ['β1/ GRK2', 'β2', 'β2/ GRK2'] and sp_key in row:
-
-                    #     try:
-                    #         data[source][receptor][sp_key]['fam_emax'] = round(float(row[f'Emax {sp_key.replace(" ", "")}']), 1)
-                    #     except:
-                    #         new_a = row[f'Emax {sp_key.replace(" ", "")}']
-                    #         print(f'ERROR new_a: {new_a}, {sp.family.parent.name}, sp_key: {sp_key}')
-                    #         data[source][receptor][sp_key]['fam_emax'] = 0
-                    #     try:
-                    #         data[source][receptor][sp_key]['fam_pec50'] = round(float(row[f'pEC50 {sp_key.replace(" ","")}']), 1)
-                    #     except:
-                    #         new_b = row[f'pEC50 {sp_key.replace(" ", "")}']
-                    #         print(f'ERROR new_b: {new_b}, {sp.family.parent.name}, spkey: {sp_key}')
-                    #         data[source][receptor][sp_key]['fam_pec50'] = 0
-                    #     a = row[f'Emax {sp_key.replace(" ", "")}']
-                    #     print(f'Emax_score: {sp_key}')
 
                         # data[source][receptor][sp_key]['fam_emax'] = round(row[f'Emax {sp.family.parent.name}'])
                     if '{}-fam'.format(sp.family.parent.name) in row and source_metadata['Parameter']=='Activation rate (s-1)':
