@@ -61,6 +61,7 @@
 
 
 {% block content %}
+
 {% if page == 'structure' %}
 
 <!-- GPCRDB GPCROME SECTION -->
@@ -896,7 +897,6 @@ The latest released structure is from <strong>{{ latest_structure|date:"Y-m-d" }
   <div class="row-fluid">
     <div class="span12">
       <div class="row-fluid">
-
         <div class="span4">
           <div class="text-center">
             <div class="btn-group">
@@ -922,7 +922,6 @@ The latest released structure is from <strong>{{ latest_structure|date:"Y-m-d" }
             </div>
           </div>
         </div>
-
         <div class="span4">
           <div class="text-center">
             <div class="btn-group">
@@ -1323,6 +1322,7 @@ The latest released structure is from <strong>{{ latest_structure|date:"Y-m-d" }
 <script src="{% static 'home/js/saveSvgAsPng.js' %}"></script>
 <script src="{% static 'home/js/saveSvg.js' %}"></script>
 <script src="{% static 'home/js/phylo_tree.js' %}"></script>
+
 {% if page == 'structure' %}
 <script src="{% static 'home/js/datamapper.js' %}"></script>
 <script src="{% static 'home/js/popper.min.js' %}"></script>

@@ -77,7 +77,7 @@ class Command(BaseCommand):
         )
         signcomp_arrestin = SignprotComplex.objects.filter(protein__family__slug__startswith="200")
         interface_interactions_arrestin_count = (
-            InteractingResiduePair.objects.filter(referenced_structure__in=signcomp.values_list("structure", flat=True))
+            InteractingResiduePair.objects.filter(referenced_structure__in=signcomp_arrestin.values_list("structure", flat=True))
             .exclude(res1__protein_conformation_id=F("res2__protein_conformation_id"))
             .count()
         )
@@ -111,7 +111,7 @@ class Command(BaseCommand):
             ['G proteins GproteinDb', signcomp.exclude(structure__structure_type__slug__startswith='af-').count() + SignprotStructure.objects.all().exclude(protein__family__slug__startswith="200").count(), 'GproteinDb'],
             ['G protein complexes GproteinDb', SignprotComplex.objects.all().exclude(structure__structure_type__slug__startswith='af-').count(), 'GproteinDb'],
             ['Generic residues GproteinDb', ResidueGenericNumber.objects.filter(scheme_id__in=[15]).values('label').count(), 'GproteinDb'],
-            ['G protein complexes', Structure.objects.filter(structure_type__slug='af-signprot').count(), 'GproteinDb'],
+            ['GPCR complexes', Structure.objects.filter(structure_type__slug='af-signprot').count(), 'GproteinDb'],
             ['Refined complexes GproteinDb', Structure.objects.filter(structure_type__slug__startswith='af-signprot-refined').count(), 'GproteinDb'],
             ['G protein interface GproteinDb', interface_interactions_count, 'GproteinDb'],
             ['Interface mutations GproteinDb', 54, 'GproteinDb'],
@@ -120,8 +120,8 @@ class Command(BaseCommand):
             ['Species orthologs ArrestinDb', Protein.objects.filter(family__slug__startswith="200", accession__isnull=False).count(), 'ArrestinDb'],
             ['Arrestin couplings ArrestinDb', ProteinCouplings.objects.filter(g_protein__slug__startswith="200").count(), 'ArrestinDb'],
             ['Arrestins ArrestinDb', signcomp_arrestin.count() + SignprotStructure.objects.filter(protein__family__slug__startswith="200").count(), 'ArrestinDb'],
+            ['GPCR complexes ArrestinDb', signcomp_arrestin.count(), 'ArrestinDb'],
             ['Generic residues ArrestinDb', ResidueGenericNumber.objects.filter(scheme_id__in=[16]).values('label').count(), 'ArrestinDb'],
-            ['Arrestin complexes ArrestinDb', signcomp_arrestin.count(), 'ArrestinDb'],
             ['Interface interactions ArrestinDb', interface_interactions_arrestin_count, 'ArrestinDb'],
             ['Interface mutations ArrestinDb', 409, 'ArrestinDb'],
             #BiasedSignalingAtlas block

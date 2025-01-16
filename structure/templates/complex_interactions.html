@@ -2,6 +2,37 @@
   <br/>
   <br/>
   <div class="col-md-12 text-center">
+    {% if structure_type.slug == "af-arrestin" %}
+    <h2>GPCR - Arrestin interface interactions <i style="color:black; font-size:16px;" id="wide-popover" class="fas fa-info-circle" data-html="true" data-container="body" data-toggle="popover" data-trigger="click hover" data-placement="bottom" data-html="true" data-content="
+              <table id='interaction-cutoffs'>
+                <thead>
+                  <th>Interaction type</th>
+                  <th>Strict definition</th>
+                  <th>Loose definition</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Polar</td>
+                    <td>donor-acceptor dist. ≤3.5Å + donor angle ≥120°</td>
+                    <td>donor-acceptor dist. ≤4Å</td>
+                  </tr>
+                  <tr>
+                    <td>Aromatic</td>
+                    <td>Face-to-face: dist. ≤4.4Å + angle ≤30° <br/>Face-to-edge: dist. ≤5.5Å + angle >30° <br/>Cation-π: dist. to cat. ≤6.6Å + angle ≤30°</td>
+                    <td>dist. ≤5.5Å OR Cation-π</td>
+                  </tr>
+                  <tr>
+                    <td>Hydrophobic</td>
+                    <td>≥3 atom pairs</td>
+                    <td>≥1 atom pair</td>
+                  </tr>
+                  <tr>
+                    <td>van der Waals</td>
+                    <td>≥3 atom pairs</td>
+                    <td>≥1 atom pair</td>
+                </tbody>
+              </table>"></i></h2>
+    {% else %}
     <h2>GPCR - G protein interface interactions <i style="color:black; font-size:16px;" id="wide-popover" class="fas fa-info-circle" data-html="true" data-container="body" data-toggle="popover" data-trigger="click hover" data-placement="bottom" data-html="true" data-content="
               <table id='interaction-cutoffs'>
                 <thead>
@@ -31,6 +62,7 @@
                     <td>≥1 atom pair</td>
                 </tbody>
               </table>"></i></h2>
+    {% endif %}
   </div>
 </div>
 
@@ -55,18 +87,24 @@
     <div class="tab-pane container active" id="circles">
 
       <div>
+        {% if structure_type.slug == "af-arrestin" %}
+        <p>The biflare plot is a modified version of a flareplot, where lines are drawn between an <b>inner concentric circle</b>
+          <i>(arrestin residues)</i>
+        {% else %}
         <p>The biflare plot is a modified version of a flareplot, where lines are drawn between an <b>inner concentric circle</b>
           <i>(G&alpha; residues)</i>
+        {% endif %}
           and an <b>outer concentric circle</b> <i>(GPCR residues)</i> depicting the interface interactions.<br/>
           Different interaction types are shown with different line types (<b>aromatic</b> - <i>solid</i>,
           <b>hydrophobic</b> - <i>dashed</i>,
           <b>ionic</b> - <i>long dashed</i>, <b>polar</b> - <i>dotted</i>, <b>Van der Waals</b> - <i>dash-dot</i>).<br/>
           The interactive features include filtering on interaction type, segments, residues and backbone or sidechain interactions.
         </p>
+
       </div>
       <br/>
       <div>
-        <b>Interaction cut-off:</b>
+        <b>Interaction definitions:</b>
           <div class="btn-group" role="group" id="cut_off">
               <button id="strict" class="btn btn-info active">Strict</button>
               <button id="loose" class="btn btn-info">Loose</button>
@@ -89,7 +127,11 @@
         </div>
         <div class="col-md-9" style="padding-left: 90px">
           <div class="container">
+            {% if structure_type.slug == "af-arrestin" %}
+            <p style="display: inline-block; vertical-align: middle;"><b>GPCR-Arrestin backbone (bb) or sidechain (sc):</b></p>
+            {% else %}
             <p style="display: inline-block; vertical-align: middle;"><b>GPCR-G protein backbone (bb) or sidechain (sc):</b></p>
+            {% endif %}
             <div class="checkbox-group" style="display: inline-block; vertical-align: middle; margin-left: 10px;">
               <div class="checkbox-item">
                 <input type="checkbox" id="main-main" name="chain" value="Main-Main">
@@ -221,7 +263,11 @@
 
     </div>
     <div class="tab-pane container" id="3dview">
+      {% if structure_type.slug == "af-arrestin" %}
+      <p class="inline" style='font-size: 18px;'><span style="color:#50C878;">Arrestin</span>,
+      {% else %}
       <p class="inline" style='font-size: 18px;'><span style="color:#fc660ff0;">G&alpha;</span>,
+      {% endif %}
         {% if model.signprot_complex.beta_protein %}
         <span style="color:#f79862;">G&beta;</span>,
         {% endif %}
@@ -252,7 +298,11 @@
                           <th align="center"> <br>AA</th>
                           <th align="center"> <br>Number</th>
                           <th style='border-right: 1px solid;' align="center">Generic<br>number</th>
+                          {% if structure_type.slug == "af-arrestin" %}
+                          <th align="center">Arrestin<br>segment</th>
+                          {% else %}
                           <th align="center">G&alpha;<br>segment</th>
+                          {% endif %}
                           <th align="center"> <br>AA</th>
                           <th align="center"> <br>Number</th>
                           <th align="center">Generic<br>number</th>

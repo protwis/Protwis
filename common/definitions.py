@@ -2277,7 +2277,18 @@ G_PROTEIN_DISPLAY_NAME = { # Alpha
                            'G(T) subunit gamma-T1':'G&gamma;T1', 'G(I)/G(S)/G(O) subunit gamma-2':'G&gamma;2',
                            'subunit gamma':'G&gamma;'}
 
-ARRESTIN_DISPLAY_NAME = {'arrs':'S-arrestin', 'arrb1':'Beta-arrestin-1'}
+ARRESTIN_DISPLAY_NAME = {'arrc_human': 'Arrestin-C',
+                         'arrs_human': 'S-arrestin',
+                         'arrs_mouse':'S-arrestin',
+                         'arrs_bovin':'S-arrestin',
+                         'arrb1_human':'Beta-arrestin-1',
+                         'arrb1_rat':'Beta-arrestin-1',
+                         'arrb2_human':'Beta-arrestin-2',
+                         'arrs':'S-arrestin',
+                         'arrb1':'Beta-arrestin-1',
+                         'arrb2':'Beta-arrestin-2',
+                         'arrc':'Arrestin-C'}
+
 
 # Remove this constants in the future
 _BEFORE_NAR2025_CLASSLESS_PARENT_GPCR_SLUGS_DICT = {'008':'Other GPCRs'} # {slug:name}

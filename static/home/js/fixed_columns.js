@@ -14,7 +14,7 @@ function update_text_in_modal() {
     var group;
     group = $(".tableview:visible").attr("group-number");
     if (group) mode = mode + group;
-    
+
     $(".pdb_selected", oTable[mode].cells().nodes()).each(function() {
         if ($(this).prop("checked")) {
             $(this).closest("tr").addClass("selected");
@@ -810,7 +810,7 @@ function showPDBtable(element) {
         //   ]);
 
         var loading_anim = $(element + " .loading_overlay");
-        var delayDraw = true; 
+        var delayDraw = true;
 
         oTable[mode].on('preDraw.dt', function() {
             console.time('preDrawing');
@@ -823,12 +823,12 @@ function showPDBtable(element) {
                 console.log(loading_anim.css('display'));
 
                 setTimeout(function() {
-                delayDraw = false; 
-                oTable[mode].draw(); 
+                delayDraw = false;
+                oTable[mode].draw();
                 }, 100);
 
                 return false;
-            } 
+            }
         });
 
         oTable[mode].on("draw.dt", function(e, oSettings) {

@@ -22,6 +22,10 @@
                         {# NOW BASED ON SEGMENT CATEGORY - can be optimized #}
                         {% if r.0.protein_segment.category == "helix" %}
                          bg-info
+                        {% elif r.0.protein_segment.slug == "s20c" %}
+                            bg-danger
+                        {% elif r.0.protein_segment.category == "loop" %}
+                            bg-warning
                         {% else %}
                          bg-success
                         {% endif %}"

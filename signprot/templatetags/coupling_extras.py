@@ -56,3 +56,41 @@ def pub_out(objs):
     return '{} et al. <i>{}</i> {}'.format(main_auth, objs.journal.name, objs.year)
     # else:
     #     return 'weird {}'.format(objs)
+
+@register.filter
+def dict_get(dictionary, key):
+    try:
+        return dictionary.get(key, '')
+    except (TypeError, AttributeError):
+        return ''
+
+@register.filter
+def remove_prefix(value):
+    prefixes = ['Psites_', 'Osites_', 'Plong_', 'Olong_']
+    for prefix in prefixes:
+        if value.startswith(prefix):
+            return value[len(prefix):]
+    return value
+
+@register.filter
+def join_if_list(value, separator=', '):
+    if isinstance(value, list):
+        return separator.join(map(str, value))
+    return value
+
+@register.filter
+def compute_width_min(label, min_width=3):
+    length = len(label)
+    if length < min_width:
+        length = min_width
+
+    # Calculate width: length * character width factor + padding
+    # Adjust the character width factor and padding as needed
+    width = length * 1 + 1.5  # Character width factor and padding
+
+    # Return width as a string with 'em' unit
+    return f'{width}em'
+
+@register.filter
+def range_filter(n):
+    return range(n)

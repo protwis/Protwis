@@ -265,7 +265,9 @@ class ResidueTablesDisplay(TemplateView):
                         data[segment.slug][pos] = {scheme.slug : pos, 'seq' : ['-']*len(proteins)}
                 elif scheme == default_scheme:
                     for pos in list(set([x.generic_number.label for x in residues if x.protein_segment == segment])):
-                        data[segment.slug][pos] = {scheme.slug : pos, 'seq' : ['-']*len(proteins)}
+                        # data[segment.slug][pos] = {scheme.slug : pos.replace(".0", "."), 'seq' : ['-']*len(proteins)}
+                        data[segment.slug] = {pos: {scheme.slug: pos.replace(".0", ".") if ".0" in pos else pos, 'seq': ['-']*len(proteins)}
+                                            for pos in set(x.generic_number.label for x in residues if x.protein_segment == segment)}
 
             for residue in residues:
                 alternatives = residue.alternative_generic_numbers.all()

@@ -293,8 +293,8 @@ function copyToClipboard(txt) {
               gdataC = {{ ClassC_gtp_plus|safe }}
               gdataF = {{ ClassF_gtp_plus|safe }}
 
-              gdata['&beta;-Arrestin<sub>1</sub>'] = gdataA['&beta;-Arrestin<sub>1</sub>']+gdataB1['&beta;-Arrestin<sub>1</sub>']+gdataC['&beta;-Arrestin<sub>1</sub>']+gdataF['&beta;-Arrestin<sub>1</sub>']
-              gdata['&beta;-Arrestin<sub>2</sub>'] = gdataA['&beta;-Arrestin<sub>2</sub>']+gdataB1['&beta;-Arrestin<sub>2</sub>']+gdataC['&beta;-Arrestin<sub>2</sub>']+gdataF['&beta;-Arrestin<sub>2</sub>']
+              gdata['&beta;-Arrestin 1'] = gdataA['&beta;-Arrestin 1']+gdataB1['&beta;-Arrestin 1']+gdataC['&beta;-Arrestin 1']+gdataF['&beta;-Arrestin 1']
+              gdata['&beta;-Arrestin 2'] = gdataA['&beta;-Arrestin 2']+gdataB1['&beta;-Arrestin 2']+gdataC['&beta;-Arrestin 2']+gdataF['&beta;-Arrestin 2']
               $("#ClassA").removeClass("active");
               $("#ClassB1").removeClass("active");
               $("#ClassC").removeClass("active");
@@ -708,8 +708,10 @@ $(window).on("load",function() {
     var env = "{{ signalling_data|safe }}";
     if(env === "gprot"){
       // conversion = {"Gs":"blue", "Gi/o":"red", "Gq/11":"black", "G12/13":"green"};
+      gradient = true;
       conversion = {"Gs":"#0000FF", "Gi/o":"#FF0000", "Gq/11":"#000000", "G12/13":"#008000", "GPa1 family":"#FFC0CB"};
     } else {
+      gradient = false;
       conversion = {"Beta-arrestin-1":"#FFA500", "Beta-arrestin-2":"#800080"};
     };
     $("#UniProtNames").click(function(){
@@ -717,37 +719,37 @@ $(window).on("load",function() {
         $("#IUPHARNames").removeClass("active");
         changeLeavesLabels("tree_class_a","UniProt", whole_dict);
         // DrawCircles(location, data, starter, dict, fancy=false, clean=true, fixed_total=false, gradient=true)
-        DrawCircles('tree_class_a',selectivitydata_gtp_plus, maxLeafNodeLenght, conversion, true, true, 7);
+        DrawCircles('tree_class_a',selectivitydata_gtp_plus, maxLeafNodeLenght, conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_b1","UniProt", whole_dict);
-        DrawCircles('tree_class_b1',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_b1',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_b2","UniProt", whole_dict);
-        DrawCircles('tree_class_b2',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_b2',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_c","UniProt", whole_dict);
-        DrawCircles('tree_class_c',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_c',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_f","UniProt", whole_dict);
-        DrawCircles('tree_class_f',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_f',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_t2","UniProt", whole_dict);
-        DrawCircles('tree_class_t2',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_t2',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_orphan","UniProt", whole_dict);
-        DrawCircles('tree_orphan',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_orphan',selectivitydata_gtp_plus,maxLeafNodeLenght,conversion, true, true, 7, gradient);
       });
     $("#IUPHARNames").click(function() {
         $("#UniProtNames").removeClass("active");
         $("#IUPHARNames").addClass("active");
         changeLeavesLabels("tree_class_a","IUPHAR", whole_dict);
-        DrawCircles('tree_class_a',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_a',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_b1","IUPHAR", whole_dict);
-        DrawCircles('tree_class_b1',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_b1',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_b2","IUPHAR", whole_dict);
-        DrawCircles('tree_class_b2',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_b2',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_c","IUPHAR", whole_dict);
-        DrawCircles('tree_class_c',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_c',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_f","IUPHAR", whole_dict);
-        DrawCircles('tree_class_f',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_f',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_class_t2","IUPHAR", whole_dict);
-        DrawCircles('tree_class_t2',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_class_t2',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
         changeLeavesLabels("tree_orphan","IUPHAR", whole_dict);
-        DrawCircles('tree_orphan',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
+        DrawCircles('tree_orphan',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
     });
     draw_tree(tree_class_a, tree_class_a_options); //, "IUPHAR", receptor_dictionary);
     draw_tree(tree_class_b1, tree_class_b1_options);
@@ -757,13 +759,13 @@ $(window).on("load",function() {
     draw_tree(tree_class_t2, tree_class_t2_options);
     draw_tree(tree_orphan_a, tree_orphan_options);
     console.log('Drawing Circles');
-    DrawCircles('tree_class_a',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
-    DrawCircles('tree_class_b1',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
-    DrawCircles('tree_class_b2',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
-    DrawCircles('tree_class_c',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
-    DrawCircles('tree_class_f',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
-    DrawCircles('tree_class_t2',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
-    DrawCircles('tree_orphan',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7);
+    DrawCircles('tree_class_a',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
+    DrawCircles('tree_class_b1',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
+    DrawCircles('tree_class_b2',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
+    DrawCircles('tree_class_c',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
+    DrawCircles('tree_class_f',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
+    DrawCircles('tree_class_t2',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
+    DrawCircles('tree_orphan',selectivitydata_gtp_plus, maxLeafNodeLenght,conversion, true, true, 7, gradient);
     $("#tree_class_a svg g").first().attr('transform', 'translate(555,555) scale(0.9,0.9) ');
     $("#tree_class_a_svg").attr('height', 1210);
     $("#tree_class_b1 svg g").first().attr('transform', 'translate(190,220) scale(0.80,0.80) ');
@@ -1093,9 +1095,9 @@ $(window).on("load",function() {
   </p>
   {% endif %}
   <p>
-    <b>Selectivity Landscape of 100 Therapeutically Relevant GPCR Profiled by an Effector Translocation-Based BRET Platform.</b><br>
-    Avet, C., Mancini, A., Breton, B., Gouill, C. L., Hauser, A. S., Normand, C., Kobayashi, H., Gross, F., Hogue, M., Lukasheva, V., Morissette, S., Fauman, E., Fortin, J.-P., Schann, S., Leroy, X., Gloriam, D. E. & Bouvier, M.<br>
-    <i>bioRxiv</i> 2020.04.20.052027 (2020). <b>doi:</b> <a href=" https://doi.org/10.1101/2020.04.20.052027" target="_blank">10.1101/2020.04.20.052027</a>
+    <b>Effector membrane translocation biosensors reveal G protein and βarrestin coupling profiles of 100 therapeutically relevant GPCRs.</b><br>
+    Avet, C., Mancini, A., Breton, B., Le Gouill, C., Hauser, A.S., Normand, C., Kobayashi, H., Gross, F., Hogue, M., Lukasheva, V., St-Onge, S., Carrier, M., Héroux, M., Morissette, S., Fauman, E.B., Fortin, J.P., Schann, S., Leroy, X., Gloriam, D.E., Bouvier, M.<br>
+    <i>eLife.</i> 2022 <b>doi:</b> <a href="https://doi.org/10.7554/eLife.74101" target="_blank">10.7554/eLife.74101</a>
   </p>
 </div>
 

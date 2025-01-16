@@ -325,236 +325,223 @@
             </table>
           {% else %}
           <table class="display compact text-nowrap" id='structures_scrollable'>
-              <thead>
-                  <tr class='over_header over_header_row'>
-                      <th colspan=6 class="over_header flexible_over_header" id='sign_prot_over_header'>
-                          <div>
-                              <div class='overhead_text'>ARRESTIN</div>
-                          </div>
-                      </th>
-                      <th colspan=4 class="over_header flexible_over_header" id='structure_over_header' >
-                          <div>
-                              <div class='overhead_text'>STRUCTURE</div>
-                              <div class='overhead_close'>
-                                  <button type="button" class="close hide_columns" columns="10,11,12,13"  aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              </div>
-                          </div>
-                      </th>
-                      <th colspan=5 class="over_header">
-                          <div>
-                              <div class='overhead_text'>RECEPTOR</div>
-                              <div class='overhead_close'>
-                                  <button type="button" class="close hide_columns" columns="14,15,16,17,18" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              </div>
-                          </div>
-                      </th>
-                      <th colspan=3 class="over_header flexible_over_header" id='aux_prot_over_header'>
-                          <div>
-                              <div class='overhead_text'>OTHER PROTEINS</div>
-                              <div class='overhead_close'>
-                                  <button type="button" class="close hide_columns" columns="19,20,21" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              </div>
-                          </div>
-                      </th>
-                      <th colspan=3 class="over_header flexible_over_header" id='structure_ligand_over_header'>
-                          <div class='overhead_text'>STRUCTURE LIGAND</div>
-                          <div class='overhead_close'>
-                                  <button type="button" class="close hide_columns" columns="22,23,24" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              </div>
-                          </div>
-                      </th>
-                      <th colspan=2 class="over_header flexible_over_header" id='endo_ligand_over_header'>
-                          <div class='overhead_text'>PHYSIOLOGICAL LIGAND</div>
-                              <div class='overhead_close'>
-                                  <button type="button" class="close hide_columns" columns="25,26" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              </div>
-                          </div>
-                      </th>
-                      <th colspan=3 class="over_header flexible_over_header" id='reference_over_header'>
-                          <div class='overhead_text'>REFERENCE</div>
-                              <div class='overhead_close'>
-                                  <button type="button" class="close hide_columns" columns="27,28,29" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              </div>
-                          </div>
-                      </th>
-                  </tr>
-                  <tr class='over_header centered-header'>
-                      <th></th>
-                      <th>Fam.</th>
-                      <th>Arrestin</th>
-                      <th>Species</th>
-                      <th>Note</th>
-                      <th class='rightborder'>% of Seq</th>
-                      <th>Method</th>
-                      <th>
-                          <div>
-                              <div>PDB</div>
-                              <div><button class='icon-button' type='button'><i id='pdb_copy' class="glyphicon glyphicon-export pdb-export"></i></button></div>
-                          </div>
-                      </th>
-                      <th>Refined<br>structure<br><a href="https://docs.gpcrdb.org/structures.html#refined-structures" target="_blank"><span class="glyphicon glyphicon-info-sign"></span></a></th>
-                      <th class='rightborder'>Resolution</th>
-                      <th>
-                          <div>
-                              <div>UniProt</div>
-                              <div><button class='icon-button' type='button'><i id='uniprot_copy' class="glyphicon glyphicon-export uniprot-export"></i></button></div>
-                          </div>
-                      </th>
-                      <th>IUPHAR</th>
-                      <th>Receptor family</th>
-                      <th>Class</th>
-                      <th class='rightborder'>Species</th>
-                      <th>Receptor fusion</th>
-                      <th>Antibodies</th>
-                      <th class='rightborder'>Other</th>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th class='rightborder'>Function</th>
-                      <th>Name</th>
-                      <th class='rightborder'>Type</th>
-                      <th>Authors</th>
-                      <th>Reference</th>
-                      <th class='rightborder'>PDB Date</th>
-                      <th style='display: none;'></th>
-                  </tr>
-                  <tr>
-                      <th class='no-sort checkbox_tr'><input class="select-all" type="checkbox" onclick="select_all(this)"></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th class='rightborder'></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th class='rightborder'></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th class='rightborder'></th>
-                      <th></th>
-                      <th></th>
-                      <th class='rightborder'></th>
-                      <th></th>
-                      <th></th>
-                      <th class='rightborder'></th>
-                      <th></th>
-                      <th class='rightborder'></th>
-                      <th></th>
-                      <th></th>
-                      <th class='rightborder'></th>
-                      <th style='display: none'></th>
-                  </tr>
+            <thead>
+                <tr class='over_header over_header_row'>
+                    <th colspan=1 class="over_header"></th>
+                    <th colspan=4 class="over_header flexible_over_header" id='structure_over_header' >
+                        <div>
+                            <div class='overhead_text'>STRUCTURE</div>
+                            <div class='overhead_close'>
+                                <button type="button" class="close hide_columns" columns="1,2,3,4"  aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                        </div>
+                    </th>
+                    <th colspan=5 class="over_header">
+                        <div>
+                            <div class='overhead_text'>RECEPTOR</div>
+                            <div class='overhead_close'>
+                                <button type="button" class="close hide_columns" columns="5,6,7,8,9" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                        </div>
+                    </th>
+                    <th colspan=5 class="over_header flexible_over_header" id='sign_prot_over_header'>
+                        <div>
+                            <div class='overhead_text'>ARRESTIN</div>
+                        </div>
+                    </th>
+                    <th colspan=3 class="over_header flexible_over_header" id='aux_prot_over_header'>
+                        <div>
+                            <div class='overhead_text'>OTHER PROTEINS</div>
+                            <div class='overhead_close'>
+                                <button type="button" class="close hide_columns" columns="15,16,17" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                        </div>
+                    </th>
+                    <th colspan=3 class="over_header flexible_over_header" id='structure_ligand_over_header'>
+                        <div class='overhead_text'>STRUCTURE LIGAND</div>
+                        <div class='overhead_close'>
+                            <button type="button" class="close hide_columns" columns="18,19,20" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                    </th>
+                    <th colspan=3 class="over_header flexible_over_header" id='reference_over_header'>
+                        <div class='overhead_text'>REFERENCE</div>
+                        <div class='overhead_close'>
+                            <button type="button" class="close hide_columns" columns="21,22,23" style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                    </th>
+                </tr>
+                <tr class='over_header centered-header'>
+                    <th class='rightborder'></th>
+                    <!-- Structure block -->
+                    <th>
+                        <div>
+                            <div>PDB</div>
+                            <div><button class='icon-button' type='button'><i id='pdb_copy' class="glyphicon glyphicon-export pdb-export"></i></button></div>
+                        </div>
+                    </th>
+                    <th>Refined<br>structure<br><a href="https://docs.gpcrdb.org/structures.html#refined-structures" target="_blank"><span class="glyphicon glyphicon-info-sign"></span></a></th>
+                    <th>Method</th>
+                    <th class='rightborder'>Resolution</th>
 
-              </thead>
-              <tbody>
-              {% for structure in structures %}
-                  {% if structure.representative %}
-                      <tr class="repr-st" model_id='{{structure.pk}}'>
-                  {% else %}
-                      <tr model_id='{{structure.pk}}'>
-                  {% endif %}
-                      <td class="text-center"><input class="alt" type="checkbox" id="{{ structure.pk }}"></td>
+                    <!-- Receptor block -->
+                    <th>
+                        <div>
+                            <div>UniProt</div>
+                            <div><button class='icon-button' type='button'><i id='uniprot_copy' class="glyphicon glyphicon-export uniprot-export"></i></button></div>
+                        </div>
+                    </th>
+                    <th>IUPHAR</th>
+                    <th>Receptor family</th>
+                    <th>Class</th>
+                    <th class='rightborder'>Species</th>
 
-                      {% if structure.protein %}
-                        <td>{{ structure.protein.family.parent|safe }}</td>
-                        <td><a target='_blank' href="/signprot/{{ structure.protein.entry_name }}">{{ structure.protein.name|safe }}</a></td>
-                        <td>{{ structure.protein.species.common_name|safe }}</td>
-                      {% else %}
-                        <td>{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,family"|safe }}</td>
-                        <td><a target='_blank' href="/signprot/{{ structure.extra_proteins.all|only_one_subunit:'Arrestin,entry_name' }}">{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,name"|safe }}</a></td>
-                        <td class='expand'>{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,species"|safe }}</td>
-                      {% endif %}
+                    <!-- Arrestin block -->
+                    <th>Fam.</th>
+                    <th>Arrestin</th>
+                    <th>Species</th>
+                    <th>Note</th>
+                    <th class='rightborder'>% of Seq</th>
+
+                    <th>Receptor fusion</th>
+                    <th>Antibodies</th>
+                    <th class='rightborder'>Other</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th class='rightborder'>Function</th>
+                    <th>Authors</th>
+                    <th>Reference</th>
+                    <th class='rightborder'>PDB Date</th>
+                    <th style='display: none;'></th>
+                </tr>
+                <tr>
+                    <th class='no-sort checkbox_tr rightborder'><input class="select-all" type="checkbox" onclick="select_all(this)"></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class='rightborder'></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class='rightborder'></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class='rightborder'></th>
+                    <th></th>
+                    <th></th>
+                    <th class='rightborder'></th>
+                    <th></th>
+                    <th></th>
+                    <th class='rightborder'></th>
+                    <th></th>
+                    <th></th>
+                    <th class='rightborder'></th>
+                    <th style='display: none'></th>
+                </tr>
+
+            </thead>
+            <tbody>
+            {% for structure in structures %}
+                {% if structure.representative %}
+                    <tr class="repr-st" model_id='{{structure.pk}}'>
+                {% else %}
+                    <tr model_id='{{structure.pk}}'>
+                {% endif %}
+                    <td class="text-center"><input class="alt" type="checkbox" id="{{ structure.pk }}"></td>
+
+                    <!-- Structure block -->
+                    {% if structure.protein %}
+                        <td style="text-align:center;"><a target="_blank" href="/signprot/structure/{{ structure.pdb_code.index }}">{{ structure.pdb_code.index }}</a></td>
+                        <!-- <td class="pdb text-left"><a href="/signprot/structure/{{ structure.pdb_code.index }}">{{ structure.pdb_code.index}}</a></td> -->
+                    {% else %}
+                        <td style="text-align:center;"><a target="_blank" href="{{ structure.pdb_code.index }}">{{ structure.pdb_code.index }}</a></td>
+                        <!-- <td class="pdb text-left"><a href="{{ structure.pdb_code.index }}">{{ structure.pdb_code.index}}</a></td> -->
+                    {% endif %}
+                    <td>
+                        {% if structure.refined %}
+                          <a target="_blank" href="refined/{{ structure.pdb_code.index|upper }}">{{ structure.pdb_code.index|upper }}_refined</a>
+                          <!-- <a target='_blank' href="refined/{{ structure.pdb_code.index|upper }}">{{structure.pdb_code.index}}_refined</a> -->
+                        {% else %}
+                          -
+                        {% endif %}
+                    </td>
+                    <td>{{ structure.structure_type.type_short|escape }}</td>
+                    <td class="text-center">{{ structure.resolution|floatformat:"1" }}</td>
+
+                    <!-- Receptor block -->
+                    {% if structure.protein_conformation %}
+                        <td><span><a href="http://www.uniprot.org/uniprot/{{ structure.protein_conformation.protein.parent.accession }}">{{ structure.protein_conformation.protein.parent.entry_short|safe }}</a></span></td>
+                        <td class='uniprot'><a href="/protein/{{ structure.protein_conformation.protein.parent.entry_name }}">{{ structure.protein_conformation.protein.parent.short|safe }}</a></td>
+                    {% else %}
+                        <td>-</td>
+                        <td>-</td>
+                    {% endif %}
+                    <td><span>{{ structure.protein_conformation.protein.family.parent.short|safe|dashwhenempty }}</span></td>
+                    <td class='expand'><span>{{ structure.protein_conformation.protein.family.parent.parent.parent.short|safe|dashwhenempty }}</span></td>
+                    <td class='expand'>{{ structure.protein_conformation.protein.species.common_name|dashwhenempty }}</td>
+
+                    <!-- Arrestin block -->
+                    {% if structure.protein %}
+                      <td>{{ structure.protein.family.parent|safe }}</td>
+                      <td><a target='_blank' href="/signprot/{{ structure.protein.entry_name }}">{{ structure.protein.name|safe }}</a></td>
+                      <td>{{ structure.protein.species.common_name|safe }}</td>
+                    {% else %}
+                      <td>{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,family"|safe }}</td>
+                      <td><a target='_blank' href="/signprot/{{ structure.extra_proteins.all|only_one_subunit:'Arrestin,entry_name' }}">{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,name"|safe }}</a></td>
+                      <td class='expand'>{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,species"|safe }}</td>
+                    {% endif %}
+                    <td class='expand'>{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,note"|safe }}</td>
+                    <td class="text-center">{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,coverage"|safe }}</td>
 
 
-                      <td class='expand'>{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,note"|safe }}</td>
-
-                      <td class="text-center">{{ structure.extra_proteins.all|only_one_subunit:"Arrestin,coverage"|safe }}</td>
-
-                      <td>{{ structure.structure_type.type_short|escape }}</td>
-                      {% if structure.protein %}
-                          <td class="pdb text-left"><a href="/signprot/structure/{{ structure.pdb_code.index }}">{{ structure.pdb_code.index}}</a></td>
-                      {% else %}
-                          <td class="pdb text-left"><a href="{{ structure.pdb_code.index }}">{{ structure.pdb_code.index}}</a></td>
-                      {% endif %}
-                      <td>
-                          {% if structure.refined %}
-                            <a target='_blank' href="refined/{{ structure.pdb_code.index|upper }}">{{structure.pdb_code.index}}_refined</a>
-                          {% else %}
+                    <td>{{ structure.stabilizing_agents.all|only_fusions|linebreaksbr }}</td>
+                    <td>{{ structure.stabilizing_agents.all|only_antibodies|linebreaksbr }}</td>
+                    <td class="expand">{{ structure.stabilizing_agents.all|only_other_proteins|linebreaksbr }}</td>
+                    <td class='expand'>
+                        {% for ligand in structure.ligands.all|dictsort:"ligand_role.name" %}
+                            {{ ligand.ligand.name|safe }}
+                        {% for link in ligand.ligand.ids.all %}
+                            <a href="{{ link}}" target="_blank">{{link.web_resource.slug}}</a>
+                        {% endfor %}
+                            <br />
+                        {% empty %}
                             -
-                          {% endif %}
-                      </td>
-                      <td class="text-center">{{ structure.resolution|floatformat:"1" }}</td>
-                      {% if structure.protein_conformation %}
-                          <td><span><a href="http://www.uniprot.org/uniprot/{{ structure.protein_conformation.protein.parent.accession }}">{{ structure.protein_conformation.protein.parent.entry_short|safe }}</a></span></td>
-                          <td class='uniprot'><a href="/protein/{{ structure.protein_conformation.protein.parent.entry_name }}">{{ structure.protein_conformation.protein.parent.short|safe }}</a></td>
-                      {% else %}
-                          <td>-</td>
-                          <td>-</td>
-                      {% endif %}
-                      <td><span>{{ structure.protein_conformation.protein.family.parent.short|safe|dashwhenempty }}</span></td>
-                      <td class='expand'><span>{{ structure.protein_conformation.protein.family.parent.parent.parent.short|safe|dashwhenempty }}</span></td>
-                      <td class='expand'>{{ structure.protein_conformation.protein.species.common_name|dashwhenempty }}</td>
-                      <td>
-                          {{ structure.stabilizing_agents.all|only_fusions|linebreaksbr }}
-                      </td>
-                      <td>
-                          {{ structure.stabilizing_agents.all|only_antibodies|linebreaksbr }}
-                      </td>
-                      <td class="expand">
-                          {{ structure.stabilizing_agents.all|only_other_proteins|linebreaksbr }}
-                      </td>
-                      <td class='expand'>
-                          {% for ligand in structure.ligands.all|dictsort:"ligand_role.name" %}
-                              {{ ligand.ligand.name|safe }}
-                          {% for link in ligand.ligand.ids.all %}
-                              <a href="{{ link}}" target="_blank">{{link.web_resource.slug}}</a>
-                          {% endfor %}
-                              <br />
-                          {% empty %}
-                              -
-                          {% endfor %}
-                      </td>
-                      <td>
-                          {{ structure.ligands.all|ligandtype|linebreaksbr }}
-                      </td>
-                      <td>
-                          {{ structure.ligands.all|ligandrole|linebreaksbr }}
-                      </td>
-                      <!-- Physiological ligand -->
-                      <td class='expand'>
-                          {% autoescape off %}
-                            {{ structure.protein_conformation.protein.parent.endogenous_gtp_set.all | endo_format }}
-                          {% endautoescape %}
-                      </td>
-                      <td>{{ structure.protein_conformation.protein.parent.endogenous_gtp_set.all.0.ligand.ligand_type|dashwhenempty }}</td>
-                      <td class='expand'>
-                          {% if structure.publication %}
-                              {{ structure.publication.authors}}
-                          {% else %}
-                              -
-                          {% endif %}
-                      </td>
-                      <td>
-                          {% if structure.publication %}
-                          <a href="{{ structure.publication.web_link }}">
-                              {{ structure.publication.web_link.index }}
-                          </a>
-                          {% else %}
-                              -
-                          {% endif %}
-                      </td>
-                      <td>{{ structure.publication_date|date:"Y-m-d" }}</td>
-                      {% if structure.protein %}
-                          <td class='hidden'>{{ structure.protein.id }}</td>
-                      {% else %}
-                          <td class='hidden'>{{ structure.signprot_complex.protein.id }}</td>
-                      {% endif %}
-                  </tr>
-              {% endfor %}
-              </tbody>
-          </table>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ structure.ligands.all|ligandtype|linebreaksbr }}
+                    </td>
+                    <td>
+                        {{ structure.ligands.all|ligandrole|linebreaksbr }}
+                    </td>
+                    <td class='expand'>
+                        {% if structure.publication %}
+                            {{ structure.publication.authors}}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if structure.publication %}
+                        <a href="{{ structure.publication.web_link }}">
+                            {{ structure.publication.web_link.index }}
+                        </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ structure.publication_date|date:"Y-m-d" }}</td>
+                    {% if structure.protein %}
+                        <td class='hidden'>{{ structure.protein.id }}</td>
+                    {% else %}
+                        <td class='hidden'>{{ structure.signprot_complex.protein.id }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
           {% endif %}
         </div>
     </div>

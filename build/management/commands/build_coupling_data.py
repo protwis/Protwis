@@ -105,7 +105,6 @@ class Command(BaseCommand):
                                       'G protein independent mechanism']:  # skip bad ones
                                 continue
                             g = ProteinFamily.objects.get_or_create(name=translation[gp][0], slug=translation[gp][1])[0]
-                            # print(p, g)
                             gpair = ProteinCouplings(protein=p, g_protein=g, transduction='primary', source=source)
                             gpair.save()
 
@@ -366,6 +365,8 @@ class Command(BaseCommand):
                     ###### Family values
                     if '{}-fam'.format(sp.family.parent.name) in row and source_metadata['Parameter']=='log(Emax/EC50)':
                         data[source][receptor][sp_key]['fam_logemaxec50'] = round(row['{}-fam'.format(sp.family.parent.name)],1)
+
+                        # data[source][receptor][sp_key]['fam_emax'] = round(row[f'Emax {sp.family.parent.name}'])
                     if '{}-fam'.format(sp.family.parent.name) in row and source_metadata['Parameter']=='Activation rate (s-1)':
                         data[source][receptor][sp_key]['fam_kon_mean'] = round(row['{}-fam'.format(sp.family.parent.name)],1)
                     if '{}-fam'.format(sp.family.parent.name) in row and source_metadata['Parameter'] in ['Efficacy','Econstitutive']:
@@ -379,6 +380,21 @@ class Command(BaseCommand):
                     ###### Subtype values
                     if sp_key in row and source_metadata['Parameter']=='log(Emax/EC50)':
                         data[source][receptor][sp_key]['logemaxec50'] = round(row[sp_key],1)
+
+                        try:
+                            data[source][receptor][sp_key]['fam_emax'] = round(float(row[f'Emax {sp_key.replace(" ", "")}']), 1)
+                        except:
+                            new_a = row[f'Emax {sp_key.replace(" ", "")}']
+                            print(f'ERROR new_a: {new_a}, {sp.family.parent.name}, sp_key: {sp_key}')
+                            data[source][receptor][sp_key]['fam_emax'] = 0
+                        try:
+                            data[source][receptor][sp_key]['fam_pec50'] = round(float(row[f'pEC50 {sp_key.replace(" ","")}']), 1)
+                        except:
+                            new_b = row[f'pEC50 {sp_key.replace(" ", "")}']
+                            print(f'ERROR new_b: {new_b}, {sp.family.parent.name}, spkey: {sp_key}')
+                            data[source][receptor][sp_key]['fam_pec50'] = 0
+                        a = row[f'Emax {sp_key.replace(" ", "")}']
+                        print(f'Emax_score: {sp_key}')
 
                     if sp_key in row and source_metadata['Parameter']=='Activation rate (s-1)':
                         data[source][receptor][sp_key]['kon_mean'] = round(row[sp_key],1)
@@ -433,7 +449,7 @@ class Command(BaseCommand):
     def create_data_couplings(self):
         """This function adds all coupling data coming from the master Excel file."""
         self.logger.info('CREATE data couplings')
-
+        print('CREATE data couplings')
         # read source files
         filepath = self.master_file
         self.logger.info('Reading file ' + filepath)
@@ -528,10 +544,12 @@ class Command(BaseCommand):
                     if couplings[header]:
                         ### None is set to fields where there are no values in the data
                         ###### Needs updating if new fields are addedK
-                        vals = {k: None for k in ['variant','logemaxec50','subtype_percent','kon_mean','deltaGDP_conc','fam_rank','fam_percent','fam_logemaxec50','fam_kon_mean','fam_deltaGDP_conc']}
+                        vals = {k: None for k in ['variant','fam_emax', 'fam_pec50','logemaxec50','subtype_percent','kon_mean','deltaGDP_conc','fam_rank','fam_percent','fam_logemaxec50','fam_kon_mean','fam_deltaGDP_conc']}
                         for key in vals:
                             if key in couplings[header]:
                                 vals[key] = couplings[header][key]
+                                print(f'HEADERS: {couplings[header]}')
+                                print(f'Couplings: {key}: {couplings[header][key]}')
                         # print(p,g,gp,l,source,vals)
                         gpair = ProteinCouplings(protein=p, g_protein=g, g_protein_subunit=gp, ligand=l, source=source, physiological_ligand=lig_phys_surr,
                                                  variant=vals['variant'],
@@ -542,6 +560,8 @@ class Command(BaseCommand):
                                                  family_rank=vals['fam_rank'],
                                                  percent_of_primary_family=vals['fam_percent'],
                                                  logemaxec50_family=vals['fam_logemaxec50'],
+                                                 pec50=vals['fam_pec50'],
+                                                 emax=vals['fam_emax'],
                                                  kon_mean_family=vals['fam_kon_mean'],
                                                  deltaGDP_conc_family=vals['fam_deltaGDP_conc'],
                                                  other_protein=other_protein,
@@ -661,8 +681,8 @@ class Command(BaseCommand):
                                                    variant=couplings[header]['variant'],
                                                    source=source,
                                                    logemaxec50=couplings[header]['logemaxec50'],
-                                                   pec50=couplings[header]['pec50deg'],
-                                                   emax=couplings[header]['emaxdeg'],
+                                                   pec50=couplings[header]['pec50'],
+                                                   emax=couplings[header]['emax'],
                                                    stand_dev=couplings[header]['stddeg'],
                                                    physiological_ligand=couplings['ligand_physiological'],
                                                    g_protein_subunit=gp)

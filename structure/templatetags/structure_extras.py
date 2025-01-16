@@ -1,5 +1,6 @@
 from django import template
 from common.definitions import G_PROTEIN_DISPLAY_NAME as g_prot_dict
+from common.definitions import ARRESTIN_DISPLAY_NAME as arr_dict
 
 import re
 
@@ -183,6 +184,10 @@ def entry_short ( objs ):
 @register.filter
 def gprot_short ( objs ):
     return g_prot_dict[objs]
+
+@register.filter
+def arr_short ( objs ):
+    return arr_dict[objs]
 
 @register.filter
 def receptor_short ( objs ):

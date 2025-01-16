@@ -1140,7 +1140,7 @@ function draw_model_scores(location, element_id, score, startValue, endValue, de
 // This function generates two concentric circles made of aminoAcids
 // then creates lines connecting inner and outer aminoacids, given interactions between them
 
-function draw_interactions_in_circles(location, interactions, inner_data, outer_data, conversion_dict) {
+function draw_interactions_in_circles(location, interactions, inner_data, outer_data, conversion_dict, signalling_protein) {
   // D3 select the SVG
   const svg2 = d3.select("#" + location);
 
@@ -1222,7 +1222,50 @@ function draw_interactions_in_circles(location, interactions, inner_data, outer_
     'G.h4s6': '#C39900',
     'G.S6': '#BE9200',
     'G.s6h5': '#BA8A00',
-    'G.H5': '#876400'
+    'G.H5': '#876400',
+    "ns1": "#006400",
+    "S1": "#006A00",
+    "s1s2": "#007100",
+    "S2": "#007700",
+    "s2s3": "#007D00",
+    "S3": "#008400",
+    "s3s4": "#008A00",
+    "S4": "#009100",
+    "s4s5": "#009700",
+    "S5": "#009D00",
+    "s5s6": "#00A400",
+    "S6": "#00AA00",
+    "s6h1": "#00B100",
+    "H1": "#00B700",
+    "h1s7": "#00BD00",
+    "S7": "#00C400",
+    "s7s8": "#00CA00",
+    "S8": "#00D100",
+    "s8s9": "#00D700",
+    "S9": "#00DD00",
+    "s9s10": "#00E400",
+    "S10": "#00EA00",
+    "s10s11": "#00F100",
+    "S11": "#00F700",
+    "s11s12": "#00FD00",
+    "S12": "#00FF00",
+    "s12s13": "#00FF06",
+    "S13": "#00FF0D",
+    "s13s14": "#00FF13",
+    "S14": "#00FF1A",
+    "s14s15": "#00FF20",
+    "S15": "#00FF27",
+    "s15s16": "#00FF2D",
+    "S16": "#00FF34",
+    "s16s17": "#00FF3A",
+    "S17": "#00FF40",
+    "s17s18": "#00FF47",
+    "S18": "#00FF4D",
+    "s18s19": "#00FF54",
+    "S19": "#00FF5A",
+    "s19s20": "#00FF61",
+    "S20": "#00FF67",
+    "s20c": "#00FF6D"
   };
 
   const aminoAcids = [
@@ -1522,8 +1565,17 @@ function draw_interactions_in_circles(location, interactions, inner_data, outer_
         .style("font-family", "Palatino")
         .style("fill", "#333");
 
+    let lines;
+    let segment_label;
     // Split the centerText into two lines
-    let lines = 'G\nprotein'.split('\n');
+    if (signalling_protein == 'af-signprot') {
+      lines = 'G\nprotein'.split('\n');
+      segment_label = 'G Protein segments:';
+    } else {
+      lines = 'Arrestin'.split('\n');
+      segment_label = 'Arrestin segments:';
+    };
+
 
     // Determine the vertical offset for the text lines to make them appear centered
     const fontSize = 14; // Assuming a font size of 20 for illustration, adjust as needed
@@ -1992,11 +2044,19 @@ function draw_interactions_in_circles(location, interactions, inner_data, outer_
 
   // Creating the inner legend structur
 
+  let segment_label;
+  // Split the centerText into two lines
+  if (signalling_protein == 'af-signprot') {
+    segment_label = 'G Protein segments:';
+  } else {
+    segment_label = 'Arrestin segments:';
+  };
+
   const headerInnerLegend = innercircleLegend.append("text")
                               .attr("x", 0)
                               .attr("y", -20)
                               .attr("class", "legend-header")
-                              .text("G Protein segments:")
+                              .text(segment_label)
                               .attr("font-family", "Arial")
                               .attr("font-size", "16px")
                               .attr("font-weight", "bold")

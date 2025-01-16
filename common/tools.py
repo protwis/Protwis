@@ -24,6 +24,7 @@ from http.client import HTTPException
 def test_model_updates(model, master_data, initialize=False, check=False, rerun=False):
     #check if the input is a single model or a list of models
     #and initialize the dictionary with the model name and length (set to 0)
+    print(f'Initialize: {initialize}')
     if initialize:
         print('Initializing master database of built models')
         if len(model) == 1:
@@ -34,7 +35,8 @@ def test_model_updates(model, master_data, initialize=False, check=False, rerun=
                 if table not in master_data.keys():
                     master_data[table] = table.objects.all().count()
     if check:
-        CHECK = False
+        print(f'CHECKing... check = {check}')
+        CHECK = True
         if len(model) == 1:
             OG = master_data[model[0]]
             NEW = model[0].objects.all().count()

@@ -18,3 +18,7 @@ def zscales_color_scale ( objs ):
             return '0'
         else:
             return str(int(10 - objs[1]*scaling))
+
+@register.filter
+def column_splitter(value):
+    return value.replace(".", "<br>")

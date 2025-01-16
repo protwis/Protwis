@@ -5,17 +5,19 @@ from django.db.models import F, Q, Count, Prefetch
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
+from django.utils.html import format_html
 from django.utils.text import slugify
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 
+from protwis.context_processors import current_site
 from common import definitions
 from common.diagrams_gpcr import DrawSnakePlot
 from common.diagrams_gprotein import DrawGproteinPlot
 from common.phylogenetic_tree import PhylogeneticTreeGenerator
 from common.views import AbsTargetSelection
-from common.models import Publication
+from common.models import Publication, WebLink
 from contactnetwork.models import InteractingResiduePair
 from mutation.models import MutationExperiment
 from protein.models import (Gene, Protein, ProteinAlias, ProteinConformation, ProteinFamily,
@@ -30,11 +32,11 @@ from structure.models import Structure
 
 import json
 import time
+import re
 
 from collections import Counter, OrderedDict
 from copy import deepcopy
 from statistics import mean
-
 
 class BrowseSelection(AbsTargetSelection):
     step = 1
@@ -129,6 +131,358 @@ class TargetSelection(AbsTargetSelection):
             'color': 'success',
         },
     }
+
+class PhosphorylationBrowser(TemplateView):
+    template_name = 'signprot/phosphorylation_sites.html'
+    signprot = 'Arrestin'
+
+    # Define regex patterns used in analysis
+    patterns = {
+        'PxPP': r'([ST][A-Za-z][ST][ST])',
+        'PxPxxO': r'([ST][A-Za-z][ST][A-Za-z]{2}[STDE])',
+        'PxxPxxO': r'([ST][A-Za-z]{2}[ST][A-Za-z]{2}[STDE])',
+    }
+
+    # Define patterns for SitesOn and SitesP
+    SitesOn_L = r'[DE][^ST]{0,2}[ST]{1,}'
+    SitesOn_R = r'[ST]{1,}[^ST]{0,2}[DE]'
+    SitesOn_LR = r'[ST]{1,}[^ST]{0,2}[DE][^ST]{0,2}[ST]{1,}'
+    SitesP_L = r'[ST][^ST]{0,2}[ST]{1,}'
+    SitesP_R = r'[ST]{1,}[^ST]{0,2}[ST]'
+    SitesP_LR = r'[ST]{1,}[^ST]{0,2}[ST][^ST]{0,2}[ST]{1,}'
+
+    patterns2 = {
+        'SitesOn': f'{SitesOn_LR}|{SitesOn_L}|{SitesOn_R}',
+        'SitesP': f'{SitesP_LR}|{SitesP_L}|{SitesP_R}',
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        sites = self.calculating()
+        context['fixed_headers'] = ['uniprot', 'gtodb', 'family', 'class']
+        context['segment_headers'] = self._headers()['headers']
+        context['extra_headers'] = ['log(Emax/EC50)', 'emax', 'pEC50']
+
+        # Collect all unique labels from 'emax', 'pec50', 'logemaxec50'
+        labels_set = set()
+        for site in sites:
+            for header in context['extra_headers']:
+                data_dict = site.get(header, {})
+                labels_set.update(data_dict.keys())
+        context['coupling_labels'] = sorted(labels_set)
+
+        context['sites'] = sites
+        return context
+
+    def _headers(self):
+        segment_headers = [
+            "Seq", 
+            "AA",
+            "PxPP", 
+            "PxPxxO", 
+            "PxxPxxO", 
+            "Sum",
+            "Psites_Seq",
+            "Psites_Sites",
+            "Psites_AA",
+            "Psites_O",
+            "Psites_P",
+            "Plong_Seq",
+            "Plong_AA",
+            "Plong_O",
+            "Plong_P",
+            "Osites_Seq",
+            "Osites_Sites",
+            "Osites_AA",
+            "Osites_O",
+            "Osites_P",
+            "Olong_Seq",
+            "Olong_AA",
+            "Olong_O",
+            "Olong_P",
+        ]
+        return {'headers': segment_headers}
+
+    def segments(self):
+        protein_data = []
+
+        # Prefetch related objects to optimize database queries
+        protein_couplings_queryset = ProteinCouplings.objects.filter(
+            g_protein__parent__name=self.signprot,
+            other_protein__isnull=True
+        ).exclude(
+            variant__startswith='iso'
+        ).select_related('g_protein_subunit'
+        ).order_by('g_protein_subunit__entry_name', 'variant')
+
+        # Prefetch the protein couplings
+        protein_couplings_prefetch = Prefetch(
+            'proteincouplings_set',
+            queryset=protein_couplings_queryset,
+            to_attr='filtered_couplings')
+
+        # Prefetch web links for UniProt and Guide to Pharmacology
+        web_links_prefetch = Prefetch(
+            'web_links',
+            queryset=WebLink.objects.filter(web_resource__id__in=[8, 5]).select_related('web_resource'),
+            to_attr='links')
+        
+        class_names = [
+            "Class A (Rhodopsin)",
+            "Class B1 (Secretin)",
+            "Class B2 (Adhesion)",
+            "Class C (Glutamate)",
+            "Class D1 (Ste2-like fungal pheromone)",
+            "Class F (Frizzled)",
+            "Class T2 (Taste 2)",
+            "Other GPCRs",
+        ]
+
+        prots = (
+            Protein.objects
+            .filter(
+                family__parent__parent__parent__name__in=class_names,
+                entry_name__endswith="_human",
+            )
+            .distinct()
+            .select_related(
+                "family",
+                "family__parent",
+                "family__parent__parent",
+                "family__parent__parent__parent",
+            )
+            .prefetch_related(
+                "proteinconformation_set__residue_set__protein_segment",
+                protein_couplings_prefetch,
+                web_links_prefetch,
+            )
+            .only("entry_name", "name", "family")
+        )
+
+        i = 0
+        for protein in prots:
+            i += 1
+            print(f'PROTEINS {i}')
+            print(protein.entry_name)
+            # Define family hierarchy
+            # family_name = protein.family.name if protein.family else ''
+            parent1 = protein.family.parent if protein.family else None
+            parent2 = parent1.parent if parent1 else None
+            parent3 = parent2.parent if parent2 else None
+
+            # Construct base data
+            base_data = {
+                'uniprot': self.get_uniprot_link(protein),  # GPCR
+                'gtodb': self.get_gtodb_link(protein),
+                'family': parent1.name.replace('receptors', '').replace('Class', '') if parent1 else '',
+                'class': parent3.name.split(' ')[1] if parent3 else '',
+            }
+
+            coupling_data = {
+                'emax': {},
+                'pec50': {},
+                'logemaxec50': {}
+            }
+
+            for coupling in getattr(protein, 'filtered_couplings', []):
+                # Use the g_protein_subunit_entry_name directly
+                label = (coupling.g_protein_subunit.entry_name, coupling.variant)
+
+                if coupling.emax is not None:
+                    coupling_data['emax'][label] = coupling.emax
+                if coupling.pec50 is not None:
+                    coupling_data['pec50'][label] = coupling.pec50
+                if coupling.logemaxec50 is not None:
+                    coupling_data['logemaxec50'][label] = coupling.logemaxec50
+
+            base_data.update(coupling_data)
+
+            # Initialize sequences for segments of interest
+            segment_sequences = {'icl3': '', 'c-term': ''}
+
+            # Build sequences for each segment
+            for conf in protein.proteinconformation_set.all():
+                for residue in conf.residue_set.all():
+                    segment = residue.protein_segment
+                    if segment:
+                        segment_name = segment.slug.lower()
+                        if segment_name in segment_sequences:
+                            segment_sequences[segment_name] += residue.amino_acid
+
+            # Initialize segment data
+            segment_data = base_data.copy()
+
+            # Analyze sequences for each segment and store in segment_data
+            for segment, seq in segment_sequences.items():
+                segment_specific_data = {}
+                self.sequence_analyzer(segment_specific_data, segment, seq)
+                for key, value in segment_specific_data.items():
+                    # Prefix keys with segment name to avoid collisions
+                    segment_data[f'{segment}_{key}'] = value
+
+            # Append the complete data for this protein to protein_data
+            protein_data.append(segment_data)
+
+        return protein_data
+
+    def get_uniprot_link(self, protein):
+        """Retrieve the UniProt link for the protein."""
+        uniprot_links = [link for link in getattr(protein, 'links', []) if 'uniprot' in link.web_resource.url]
+        if uniprot_links:
+            try:
+                uniprot_link = uniprot_links[1]
+            except IndexError:
+                uniprot_link = uniprot_links[0]
+
+            # Grab the base URL (which should contain `$index`)
+            uniprot_url = uniprot_link.web_resource.url
+            # Replace `$index` with the actual uniprot index
+            uniprot_url = uniprot_url.replace('$index', uniprot_link.index)
+            uniprot_display_name = protein.entry_name.split("_")[0].upper()
+            uniprot_display_name_safe = format_html(uniprot_display_name)
+
+            return format_html(
+                '<a href="{}" target="_blank">{}</a>',
+                uniprot_url,
+                uniprot_display_name_safe
+            )
+        else:
+            return protein.entry_name.split("_")[0].upper()
+
+    def get_gtodb_link(self, protein):
+        """Retrieve the Guide to Pharmacology link for the protein."""
+        gtodb_links = [link for link in getattr(protein, 'links', []) if 'guide' in link.web_resource.url]
+        if gtodb_links:
+            gtodb_link = gtodb_links[0]
+            display_name = protein.name.split("_")[0].replace(" receptor", "").replace("-adrenoceptor", "")
+            display_name_safe = format_html(display_name)
+
+            gtodb_url = gtodb_link.web_resource.url
+            gtodb_url = gtodb_url.replace('$index', gtodb_link.index)
+            return format_html(
+                '<a href="{}" target="_blank">{}</a>',
+                gtodb_url,
+                display_name_safe
+            )
+        else:
+            return protein.name.replace(" receptor", "").replace("-adrenoceptor", "")
+
+    def lower_upper_non(self, seq):
+        """Convert 'S', 'T', 'D', 'E' to uppercase, others to lowercase."""
+        return ''.join([res.upper() if res in "STDE" else res.lower() for res in seq])
+
+    def lower_upper_Ct(self, seq):
+        """Ensure the last character is uppercase, and process the rest of the sequence."""
+        if not seq:
+            return ''
+        processed_seq = ''.join([res.upper() if res in "STDE" or res.islower() else res.lower() for res in seq[:-1]])
+        last_char = seq[-1].upper()
+        return processed_seq + last_char
+
+    def longest_site(self, seqs):
+        """Find the longest sequence with the highest count of uppercase residues."""
+        if not seqs:
+            return ''
+        max_len = max(len(seq) for seq in seqs)
+        max_seqs = [seq for seq in seqs if len(seq) == max_len]
+        max_seq = max(max_seqs, key=lambda s: sum(1 for res in s if res.isupper()))
+        return max_seq
+
+    def SitesP_seq(self, seq):
+        """Extract sequences with at least 3 'S' or 'T' residues."""
+        pattern = r'[DEa-z]{3,}'
+        matches = re.split(pattern, seq)
+        return [match for match in matches if match and sum(1 for res in match if res in ['S', 'T']) >= 3]
+
+    def SitesOn_seq(self, seq):
+        """Extract SitesOn sequences based on defined patterns."""
+        matches = re.finditer(self.patterns2['SitesOn'], seq)
+        return [match.group() for match in matches if sum(1 for res in match.group() if res in 'STDE') >= 3]
+
+    def sequence_analyzer(self, data, segment, sequence):
+        """Analyze sequences and update data dictionary."""
+        # Process sequences, handling 'C-term' differently
+        if segment == 'c-term':
+            processed_seq = self.lower_upper_Ct(sequence)
+        else:
+            processed_seq = self.lower_upper_non(sequence)
+        data['Seq'] = processed_seq
+        data['AA'] = len(processed_seq)
+
+        # Count patterns in sequences
+        for key, val in self.patterns.items():
+            data[key] = len(re.findall(val, processed_seq))
+        data['Sum'] = sum(data[col] for col in self.patterns.keys())
+
+        # Process SitesP: sequences with at least 3 'S' or 'T' residues
+        data['Psites_Seq'] = self.SitesP_seq(processed_seq)
+        data['Psites_Sites'] = len(data['Psites_Seq'])
+        data['Psites_AA'] = sum(len(s) for s in data['Psites_Seq'])
+        data['Psites_O'] = sum(res in ['S', 'T', 'D', 'E'] for s in data['Psites_Seq'] for res in s)
+        data['Psites_P'] = sum(res in ['S', 'T'] for s in data['Psites_Seq'] for res in s)
+
+        # Find the longest SitesP sequence
+        data['Plong_Seq'] = self.longest_site(data['Psites_Seq'])
+        data['Plong_AA'] = len(data['Plong_Seq'])
+        data['Plong_O'] = sum(res in ['S', 'T', 'D', 'E'] for res in data['Plong_Seq'])
+        data['Plong_P'] = sum(res in ['S', 'T'] for res in data['Plong_Seq'])
+
+        # Process SitesOn sequences
+        data['Osites_Seq'] = self.SitesOn_seq(processed_seq)
+        data['Osites_Sites'] = len(data['Osites_Seq'])
+        data['Osites_AA'] = sum(len(s) for s in data['Osites_Seq'])
+        data['Osites_O'] = sum(res in ['S', 'T', 'D', 'E'] for s in data['Osites_Seq'] for res in s)
+        data['Osites_P'] = sum(res in ['S', 'T'] for s in data['Osites_Seq'] for res in s)
+
+        # Find the longest SitesOn sequence
+        data['Olong_Seq'] = self.longest_site(data['Osites_Seq'])
+        data['Olong_AA'] = len(data['Olong_Seq'])
+        data['Olong_O'] = sum(res in ['S', 'T', 'D', 'E'] for res in data['Olong_Seq'])
+        data['Olong_P'] = sum(res in ['S', 'T'] for res in data['Olong_Seq'])
+
+
+    def calculating(self):
+        sites_dict = self.segments()
+        return sites_dict
+
+####### lazy loader
+
+class LazyDataLoader:
+
+    def __init__(self, load_function,index=None, *args, **kwargs):
+        self._loaded_data = None
+        self._load_function = load_function
+        self._args = args
+        self._kwargs = kwargs
+        self.index = index
+
+    def _load_data(self):
+        if self._loaded_data is None:
+            if self.index == None:
+                self._loaded_data = self._load_function(*self._args, **self._kwargs)
+            else:
+                self._loaded_data = self._load_function(*self._args, **self._kwargs)[self.index]
+        return self._loaded_data
+
+    def __getattr__(self, name):
+        return getattr(self._load_data(), name)
+
+    def __getitem__(self, key):
+        return self._load_data()[key]
+
+    def __iter__(self):
+        return iter(self._load_data())
+
+    def __len__(self):
+        return len(self._load_data())
+
+def CouplingHandler(request):
+    domain = current_site(request)
+    origin = domain['current_site']
+    if origin == 'gprotein':
+        return CouplingBrowser.as_view()(request).render()
+    elif origin == 'arrestin':
+        return CouplingBrowser_deprecated.as_view(subunit_filter = "200_000_001", families = ["Beta"], page='arrestin')(request).render()
 
 
 class CouplingBrowser(TemplateView):
@@ -497,8 +851,8 @@ class CouplingBrowser_deprecated(TemplateView):
 
     @method_decorator(csrf_exempt)
     def get_context_data(self, **kwargs):
+        print('CouplingBrowser_deprecated get_context_data called')
         context = super().get_context_data(**kwargs)
-
         tab_fields, header = self.tab_fields(self.subunit_filter, self.families)
 
         context['tabfields'] = tab_fields
@@ -506,7 +860,6 @@ class CouplingBrowser_deprecated(TemplateView):
         flat_list = [item for sublist in header.values() for item in sublist]
         context['subunitheader'] = flat_list
         context['page'] = self.page
-
         return context
 
     @staticmethod
@@ -608,7 +961,7 @@ class CouplingBrowser_deprecated(TemplateView):
         # First create and populate the dictionary for all receptors
         dictotemplate = {}
         sourcenames = set()
-        readouts = ["logemaxec50"]#, "pec50", "emax"]
+        readouts = ["logemaxec50", 'pec50', 'emax']#, "pec50", "emax"]
         for protein in proteins:
             dictotemplate[protein.pk] = {}
             dictotemplate[protein.pk]['protein'] = protein_data[protein.pk]
@@ -649,11 +1002,18 @@ class CouplingBrowser_deprecated(TemplateView):
             family = coupling_reverse_header_names[subunit]
 
             # Combine values
-            exp_values = {
-                "logemaxec50": round(pair.logemaxec50, 1)
-                # "pec50": round(pair.pec50, 1),
-                # "emax": round(pair.emax)
-                }
+            try:
+                exp_values = {
+                    "logemaxec50": round(pair.logemaxec50, 1),
+                    "pec50": round(pair.pec50, 1),
+                    "emax": round(pair.emax)
+                    }
+            except:
+                exp_values = {
+                    "logemaxec50": 0,
+                    "pec50": 0,
+                    "emax": 0
+                    }
 
             for readout in readouts:
                 dictotemplate[pair.protein_id]['coupling'][pair.source][readout][subunit] = exp_values[readout]
@@ -869,9 +1229,9 @@ Inoue,O,TGF-α,log(Emax/EC50),5,G protein dissociation| PKC activation| ADAM17 (
 def CouplingProfiles(request, render_part="both", signalling_data="empty"):
     name_of_cache = 'coupling_profiles_' + signalling_data
 
-    context = cache.get(name_of_cache)
+    # context = cache.get(name_of_cache)
     # NOTE cache disabled for development only!
-    # context = None
+    context = None
     if context == None:
 
         context = OrderedDict()
@@ -935,7 +1295,7 @@ def CouplingProfiles(request, render_part="both", signalling_data="empty"):
         slug_translate = {'001': "ClassA", '002': "ClassB1", '003': "ClassB2", '004': "ClassC", '006': "ClassF", '009': "ClassT2"}
         key_translate ={'Gs':"G<sub>s</sub>", 'Gi/o':"G<sub>i/o</sub>",
                         'Gq/11':"G<sub>q/11</sub>", 'G12/13':"G<sub>12/13</sub>",
-                        'Beta-arrestin-1':"&beta;-Arrestin<sub>1</sub>", 'Beta-arrestin-2':"&beta;-Arrestin<sub>2</sub>"}
+                        'Beta-arrestin-1':"&beta;-Arrestin 1", 'Beta-arrestin-2':"&beta;-Arrestin 2"}
         selectivitydata_gtp_plus = {}
         receptor_dictionary = []
         if signalling_data == "gprot":
@@ -1094,17 +1454,22 @@ def CouplingProfiles(request, render_part="both", signalling_data="empty"):
                   context
     )
 
-def GProteinTree(request):
-    return CouplingProfiles(request, "tree", "gprot")
+def TreeHandler(request):
+    domain = current_site(request)
+    origin = domain['current_site']
+    print(origin)
+    if origin == 'gprotein':
+        return CouplingProfiles(request, "tree", "gprot")
+    elif origin == 'arrestin':
+        return CouplingProfiles(request, "tree", "arrestin")
 
-def GProteinVenn(request):
-    return CouplingProfiles(request, "venn", "gprot")
-
-def ArrestinTree(request):
-    return CouplingProfiles(request, "tree", "arrestin")
-
-def ArrestinVenn(request):
-    return CouplingProfiles(request, "venn", "arrestin")
+def VennHandler(request):
+    domain = current_site(request)
+    origin = domain['current_site']
+    if origin == 'gprotein':
+        return CouplingProfiles(request, "venn", "gprot")
+    elif origin == 'arrestin':
+        return CouplingProfiles(request, "venn", "arrestin")
 
 #@cache_page(60*60*24*7)
 def familyDetail(request, slug):
@@ -1447,7 +1812,6 @@ def StructureInfo(request, pdbname):
 # @cache_page(60*60*24*2)
 def signprotdetail(request, slug):
     # get protein
-
     slug = slug.lower()
     p = Protein.objects.prefetch_related('web_links__web_resource').get(entry_name=slug, sequence_type__slug='wt')
 

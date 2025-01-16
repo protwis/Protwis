@@ -115,8 +115,12 @@
                 // }
             });
 
-            var prev_ids = Array()
-            var current_align_ids = Array()
+            var prev_ids = Array();
+            var current_align_ids = Array();
+
+            {% if signalling_protein != 'af-signprot' %}
+                oTable.column(10).visible(false);
+            {% endif %}
 
             $("#constructs_div").show();
             assign_to_row();
@@ -544,7 +548,11 @@
                     <th colspan=1 class="over_header"></th>
                     <th colspan=1 class="over_header">   MODEL   </th>
                     <th colspan=5 class="over_header">RECEPTOR</th>
+                    {% if signalling_protein == 'af-signprot' %}
                     <th colspan=3 class="over_header">G PROTEIN</th>
+                    {% else %}
+                    <th colspan=3 class="over_header">ARRESTIN</th>
+                    {% endif %}
                     <th colspan=1 class="over_header" style="max-width:50px;">COUPLING DATA</th>
                     <th colspan=1 class="over_header">DATE</th>
                 </tr>
@@ -590,13 +598,21 @@
             {% for model in structure_complex_model %}
                 <tr model_id='{{model.pk}}'>
                     <td class="text-center"><input class="alt" type="checkbox" id="{{ model.pk }}"></td>
+                    {% if signalling_protein == 'af-signprot' %}
                     <td style="text-align:center;"><a target="_blank" href="complex_models/{{ model.pdb_code__index }}"><img width="14px" height="20px" class="model-link" src="{% static 'home/images/model-surface.png' %}"></a></div></td>
+                    {% else %}
+                    <td style="text-align:center;"><a target="_blank" href="complex_models/{{ model.pdb_code__index }}"><img width="14px" height="20px" class="model-link" src="{% static 'home/images/arrestin-surface.png' %}"></a></div></td>
+                    {% endif %}
                     <td class="text-center"><a target="_blank" href="/protein/{{ model.protein_conformation__protein__entry_name }}"><img width="12px" height="12px" class="gpcrdb-link" src="{% static 'home/logo/gpcr/main.png' %}"></a></td>
                     <td><a target="_blank" href="http://www.uniprot.org/uniprot/{{ model.protein_conformation__protein__accession }}">{{ model.protein_conformation__protein__entry_name|entry_short }}</a></td>
                     <td><span>{{ model.protein_conformation__protein__name|receptor_short|safe }}</span></td>
                     <td>{{ model.protein_conformation__protein__family__parent__name }}</td>
                     <td>{{ model.protein_conformation__protein__family__parent__parent__parent__name|cut_classname }}</td>
-                    <td><a href="/signprot/{{ model.signprot_complex_protein__entry_name }}">{{ model.signprot_complex__protein__family__name|gprot_short }}</a></td>
+                    {% if signalling_protein == 'af-signprot' %}
+                    <td><a href="/signprot/{{ model.signprot__complex_protein__entry_name }}">{{ model.signprot_complex__protein__family__name|gprot_short }}</a></td>
+                    {% else %}
+                    <td><a href="/signprot/{{ model.signprot_complex__protein__entry_name }}">{{ model.signprot_complex__protein__entry_name|arr_short }}</a></td>
+                    {% endif %}
                     <td>{{ model.signprot_complex__protein__family__parent__name }}</td>
                     <td>{{ model.heterotrimer }}</td>
             <!--         {% if model.Bouvier == "-" %}

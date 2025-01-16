@@ -129,7 +129,7 @@
                 </div>
 
                 <!-- Release Notes -->
-                <div class="col-md-8">
+                <!-- <div class="col-md-8">
                     <div class="panel panel-primary">
                         <div class="panel-body">
                             <h3>Welcome</h3>
@@ -139,49 +139,34 @@
                             Meanwhile, try it out and let us know what you think.
                         </div>
                     </div>
+                </div> -->
+
+                <!-- Overview -->
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <h3>Overview</h3>
+                            <br />
+                            <img role="button" id="overview-image" src="{% static 'home/images/ArrestinDb_overview.png' %}" style='height: 100%; width: 100%; object-fit: contain'>
+                        </div>
+                    </div>
                 </div>
 
-              <!-- commented stuff for POST preprint -->
-          <!-- <div class="col-md-4">
-                  <div class="panel panel-primary">
-                      <div class="panel-body">
-                          <h3><a href="/structure/statistics">Data</a></h3>
-                          <ul class="stats_list">
-                              {% for stat in release_statistics %}
-                                  <li>
-                                      {{ stat.value| safe }} {{ stat.statistics_type | safe }}
-                                  </li>
-                              {% endfor %}
-                          </ul>
-                          {% if users %}
-                              {{ users|safe }}
-                          {% endif %}
-                      </div>
-                  </div>
-              </div> -->
-
-              <!-- Release Notes -->
-        <!-- <div class="col-md-4">
-                  <div class="panel panel-primary">
-                      <div class="panel-body">
-                          <h3>Latest <a href="/pages/releasenotes">release</a></h3>
-                          <strong>{{ release_notes.date }}</strong>
-                          {{ release_notes.html|safe }}
-                          <br />
-                          <strong><a href="/pages/releasenotes">All releases</a></strong>
-                      </div>
-                  </div>
-
-                  <div class="panel panel-primary">
-                      <div class="panel-body">
-                          <h3><a href="https://files.gpcrdb.org/video/GPCRdb-David_Gloriam.mp4">Videos</a></h3>
-                      </div>
-                  </div>
-
-              </div> -->
+                <!-- Release Notes -->
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-body" id="releases">
+                            <h3>Latest <a href="/pages/releasenotes">release</a></h3>
+                            <strong>{{ release_notes.date }}</strong>
+                            {{ release_notes.html|safe }}
+                            <br />
+                            <strong><a href="/pages/releasenotes">All releases</a></strong>
+                        </div>
+                    </div>
+                </div>
 
               <!-- Publications -->
-        <!-- <div class="col-md-4">
+          <!-- <div class="col-md-4">
                   <div class="panel panel-primary">
                       <div class="panel-body" style='max-height: 530px; overflow-y: scroll;'>
                           <h3>Publications</h3>

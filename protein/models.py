@@ -399,6 +399,8 @@ class ProteinCouplings(models.Model):
     deltaGDP_conc_family = models.DecimalField(max_digits=4, decimal_places=2, null=True)
     ### Subtype based values
     logemaxec50 = models.FloatField(null=True, blank=True)
+    emax = models.FloatField(null=True, blank=True)  # Value from David Gloriam # ERASE
+    pec50 = models.FloatField(null=True, blank=True)  # Value from David Gloriam # ERASE
     percent_of_primary_subtype = models.IntegerField(null=True)
     kon_mean = models.DecimalField(max_digits=4, decimal_places=1, null=True)
     deltaGDP_conc = models.DecimalField(max_digits=4, decimal_places=2, null=True)

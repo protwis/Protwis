@@ -125,7 +125,18 @@
         <h4>MUTATIONS</h4>
     </div>
     <div class="col-md-10">
-    <p>{{ mutations|length }} mutation data points available.</p>
+    <!-- <p>{{ mutations|length }} mutation data points available.</p> -->
+    {% if "arrb1_human" in p.entry_name|stringformat:"s" %}
+        <p>0 mutation data points available</p>
+    {% elif "arrb2_human" in p.entry_name|stringformat:"s" %}
+        <p>5 mutation data points available</p>
+    {% elif "arrs" in p.entry_name|stringformat:"s" %}
+        <p>403 mutation data points available</p>
+    {% elif "arrc" in p.entry_name|stringformat:"s" %}
+        <p>0 mutation data points available</p>
+    {% else %}
+        <p>{{ mutations|length }} mutation data points available</p>
+    {% endif %}
     </div>
 </div>
 
@@ -135,7 +146,11 @@
     </div>
     {% if structures|length > 0 %}
     <div class="col-md-10">
-        <p>View in <a href="/structure/g_protein_structure_browser" target='_blank'>Structures</a></p>
+        {% if "arr" in p.entry_name|stringformat:"s" and not arr_found %}
+            <p>Found {{ structures|length }} structure(s) - view in <a href="/structure/arrestin_structure_browser" target='_blank'>Structures</a></p>
+        {% elif "gna" in p.entry_name|stringformat:"s" and not gna_found %}
+            <p>Found {{ structures|length }} structure(s) - view in <a href="/structure/g_protein_structure_browser" target='_blank'>Structures</a></p>
+        {% endif %}
     </div>
     
     {% else %}
@@ -151,9 +166,12 @@
     </div>
     {% if complex_structures|length > 0 %}
     <div class="col-md-10">
-        <p>View in <a href="/structure/g_protein_structure_browser" target='_blank'>Structures</a></p>
+        {% if "arr" in p.entry_name|stringformat:"s" and not arr_found %}
+            <p>Found {{ complex_structures|length }} complex model(s) - view in <a href="/structure/arrestin_structure_browser" target='_blank'>Structures</a></p>
+        {% elif "gna" in p.entry_name|stringformat:"s" and not gna_found %}
+            <p>Found {{ complex_structures|length }} complex model(s) - view in <a href="/structure/g_protein_structure_browser" target='_blank'>Structures</a></p>
+        {% endif %}
     </div>
-    
     {% else %}
     <div class="col-md-10">
         No receptor complex structures available

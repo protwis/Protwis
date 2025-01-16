@@ -1,0 +1,365 @@
+{% extends "home/base.html" %}
+{% load static %}
+{% load coupling_extras %}
+
+{% block addon_css %}
+    <link rel="stylesheet" href="{% static 'home/css/jquery.dataTables.min.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'home/css/yadcf_bootstrap_version.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'home/css/select2.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'home/css/signprot-multitabtable.css' %}" type="text/css"/>
+    <!-- <link rel="stylesheet" href="{% static 'home/css/bootstrap.css' %}"> -->
+
+    <!-- Custom CSS for Hover Effect -->
+    <style>
+        #proteinTable {
+            table-layout: fixed; 
+            width: 100%;
+        }
+        
+        .col_size {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+            padding: 1rem;
+        }
+        
+        .main_th {
+            border-left: 1px solid;
+            padding: 1rem;
+        }
+        
+        .truncate {
+            padding: 1rem !important;
+            width: 3rem !important;
+        }
+        
+        .truncate:hover::after {
+            content: attr(data-full-text); /* Pull the full content from a custom data attribute */
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            white-space: pre-wrap; /* Preserve line breaks and show full content */
+            top: 100%; /* Position below the text */
+            left: 0;
+            z-index: 1000;
+            width: max-content; /* Adjust width to fit content */
+            max-width: 300px; /* Limit the max width of the tooltip */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for effect */
+            pointer-events: none; /* Prevent interaction with the tooltip */
+        }
+        </style>
+        
+{% endblock %}
+
+
+{% block content %}
+
+<div class="btn-group" style="padding-left:10px;">
+    <input class="btn btn-default btn-s" type="button"
+          onclick="GlobalTableToExcel('proteinTable', 'phosphorylation sites data', 'ArrestinDB_phosphorylation_sites.xls')"
+          value="Excel (selection)">
+    <a id="dlink" style="display:none;"></a>
+</div>
+
+<!-- Tab Navigation -->
+<ul class="nav nav-tabs" id="segmentTabs" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link" id="icl3-tab" data-toggle="tab" href="" role="tab" aria-controls="icl3" aria-selected="true" onclick="showSegment('icl3')">ICL3</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="cterm-tab" data-toggle="tab" href="" role="tab" aria-controls="cterm" aria-selected="false" onclick="showSegment('cterm')">C-term</a>
+    </li>
+</ul>
+
+<!-- Data Table -->
+<table class="compact display dataTable row-border" id="proteinTable">
+    <!-- Define column widths -->
+    <colgroup>
+        <!-- Checkbox column -->
+        <col style="width: 2em;">
+        <!-- Fixed headers -->
+        {% for header in fixed_headers %}
+            <col style="width: {{ header|length|add:2 }}em;">
+        {% endfor %}
+        <!-- Segment headers - ICL3 -->
+        {% for header in segment_headers %}
+            <col class="segment-col icl3-col" style="width: {{ header|remove_prefix|compute_width_min }};">
+        {% endfor %}
+        <!-- Segment headers - C-term -->
+        {% for header in segment_headers %}
+            <col class="segment-col cterm-col" style="width: {{ header|remove_prefix|compute_width_min }};">
+        {% endfor %}
+        <!-- Extra headers -->
+        {% for header in extra_headers %}
+            {% for label in coupling_labels %}
+                <col style="width: {{ label.0|cut:"_human"|upper|length|add:2 }}em;">
+            {% endfor %}
+        {% endfor %}
+    </colgroup>
+
+
+    <thead>
+        <tr>
+            <!-- Checkbox -->
+            <th colspan="1"></th> 
+
+            <!-- Receptor -->
+            <th class="col_size" colspan="4">Receptor</th>
+
+            <!-- ICL3 Main Headers -->
+            <th class="segment-col icl3-col col_size main_th" colspan="2">Segment<br>(ICL3)</th>
+            <th class="segment-col icl3-col col_size main_th" colspan="4">Sites from<br>structures</th>
+            <th class="segment-col icl3-col col_size main_th" colspan="5">P sites</th>
+            <th class="segment-col icl3-col col_size main_th" colspan="4">Longest<br>P site</th>
+            <th class="segment-col icl3-col col_size main_th" colspan="5">O sites</th>
+            <th class="segment-col icl3-col col_size main_th" colspan="4">Longest<br>O site</th>
+
+            <!-- C-term Main Headers -->
+            <th class="segment-col cterm-col col_size main_th" colspan="2">Segment<br>(Ct)</th>
+            <th class="segment-col cterm-col col_size main_th" colspan="4">Sites from<br>structures</th>
+            <th class="segment-col cterm-col col_size main_th" colspan="5">P sites</th>
+            <th class="segment-col cterm-col col_size main_th" colspan="4">Longest<br>P site</th>
+            <th class="segment-col cterm-col col_size main_th" colspan="5">O sites</th>
+            <th class="segment-col cterm-col col_size main_th" colspan="4">Longest<br>O site</th>
+
+            <!-- Extra Headers -->
+            {% for header in extra_headers %}
+                <th class="col_size main_th" colspan="3">
+                    {% if header == 'log(Emax/EC50)' %}
+                        log(E<sub>max</sub>/EC<sub>50</sub>)
+                    {% elif header == 'emax' %}
+                        E<sub>max</sub>
+                    {% elif header == 'pEC50' %}
+                        pEC<sub>50</sub>
+                    {% else %}
+                        {{ header | title }}
+                    {% endif %}
+                </th>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th></th>
+            {% for header in fixed_headers %}
+                <th class="col_size">{{ header | title }}</th>
+            {% endfor %}
+            
+            <!-- ICL3 Subheaders -->
+            {% for header in segment_headers %}
+                <th class="segment-col icl3-col col_size">{{ header|remove_prefix }}</th>
+            {% endfor %}
+
+            <!-- C-term Subheaders -->
+            {% for header in segment_headers %}
+                <th class="segment-col cterm-col col_size">{{ header|remove_prefix }}</th>
+            {% endfor %}
+
+            <!-- Extra Headers Subheaders -->
+            {% for header in extra_headers %}
+                {% for label in coupling_labels %}
+                    <th class="col_size">
+                        {{ label.0|cut:"_human"|upper }}
+                        {% if label.1 != 'Regular' %}
+                            <br><span>{{ label.1 }}</span>
+                        {% endif %}
+                    </th>
+                {% endfor %}
+            {% endfor %}
+        </tr>
+
+        <!-- yadcf filters -->
+    <tr>
+        {% for i in 5|range_filter %}
+            <th></th>
+        {% endfor %}
+        {% for i in 24|range_filter %}
+            <th class="segment-col icl3-col"></th>
+        {%  endfor %}
+        {% for i in 24|range_filter %}
+            <th class="segment-col cterm-col"></th>
+        {% endfor %}
+        {% for i in 9|range_filter %}
+            <th></th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+        {% for site in sites %}
+            <tr>
+                <td class="text-center"><input class="alt" type="checkbox"></td>
+                {% for header in fixed_headers %}
+                    <td class="col_size">{{ site|dict_get:header }}</td>
+                {% endfor %}
+
+                <!-- Free list -->
+                {% for header in segment_headers %}
+                {% with key='icl3_'|add:header %}
+                    {% with value=site|dict_get:key %}
+                        <td class="segment-col icl3-col col_size">{{ value|join_if_list }}</td>
+                    {% endwith %}
+                {% endwith %}
+                {% endfor %}
+
+                {% for header in segment_headers %}
+                {% with key='c-term_'|add:header %}
+                    {% with value=site|dict_get:key %}
+                        <td class="segment-col cterm-col col_size">{{ value|join_if_list }}</td>
+                    {% endwith %}
+                {% endwith %}
+                {% endfor %}
+
+            <!-- Extra Headers Data -->
+            {% for header in extra_headers %}
+                {% with data_dict=site|dict_get:header %}
+                    {% for label in coupling_labels %}
+                        {% with value=data_dict|dict_get:label %}
+                            {% if value is not None %}
+                                <td class="col_size">{{ value|floatformat:1 }}</td>
+                            {% else %}
+                                <td class="col_size">-</td> <!-- If value is missing -->
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                {% endwith %}
+            {% endfor %}
+
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+
+{% block addon_js %}
+  <script src="{% static 'home/js/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'home/js/jquery.dataTables.yadcf.js' %}"></script>
+  <script src="{% static 'home/js/select2.js' %}"></script>
+  <script src="{% static 'home/js/signprot-multitabtable.js' %}"></script>
+  <script src="{% static 'home/js/xlsx.full.min.js' %}"></script>  
+  <script src="{% static 'home/js/gpcrdb.js' %}"></script>
+  <script src="{% static 'home/js/browser_functions.js' %}"> </script>
+
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script> -->
+
+
+  <!-- Initialize DataTable -->
+  <script>
+    $(document).ready(function() {
+
+    var proteintable = $('#proteinTable').DataTable({
+        searching: true,
+        info: true,
+        autoWidth: false,
+        paging:false,
+        columnDefs: [
+          { targets: 'segment-col', visible: true },
+          {
+            // targets: [3,4,28],
+            targets: [5,11,29, 34, 35, 40, 44, 49],
+            // width: '30rem !important',
+            className: 'truncate', // Apply a class for truncation and hover effect
+        },
+        ],
+        order: []
+      });
+
+        // Initialize YADCF filters
+        let column_filters = [];
+        // Adjust the number of columns according to your actual table
+        column_filters = column_filters.concat(createYADCFfilters(1, 2, "multi_select", 'select2', 'select', false, null, 'html'));
+        column_filters = column_filters.concat(createYADCFfilters(3, 2, "multi_select", 'select2', 'select'));
+        // ICL3 Section
+        column_filters = column_filters.concat(createYADCFfilters(5, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(6, 5, "range_number", 'select2', ['Min', 'Max'], false));
+        column_filters = column_filters.concat(createYADCFfilters(11, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(12, 4, "range_number", 'select2', ['Mix', 'Max'], false));
+        column_filters = column_filters.concat(createYADCFfilters(16, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(17, 5, "range_number", 'select2', ['Min', 'Max'], false));
+        column_filters = column_filters.concat(createYADCFfilters(21, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(22, 3, "range_number", 'select2', ['Min', 'Max'], false));
+        column_filters = column_filters.concat(createYADCFfilters(25, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(26, 3, "range_number", 'select2', ['Min', 'Max'], false));
+
+        // // Cterm Section
+        column_filters = column_filters.concat(createYADCFfilters(5 + 24, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(6 + 24, 5, "range_number", 'select2', ['Min', 'Max'], false));
+        column_filters = column_filters.concat(createYADCFfilters(11 + 24, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(12 + 24, 4, "range_number", 'select2', ['Mix', 'Max'], false));
+        column_filters = column_filters.concat(createYADCFfilters(16 + 24, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(17 + 24, 5, "range_number", 'select2', ['Min', 'Max'], false));
+        column_filters = column_filters.concat(createYADCFfilters(21 + 24, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(22 + 24, 3, "range_number", 'select2', ['Min', 'Max'], false));
+        column_filters = column_filters.concat(createYADCFfilters(25 + 24, 1, "multi_select", 'select2', 'select', false));
+        column_filters = column_filters.concat(createYADCFfilters(26 + 24, 3, "range_number", 'select2', ['Min', 'Max'], false));
+        // coupling data
+        column_filters = column_filters.concat(createYADCFfilters(26 + 24 + 3, 9, "range_number", 'select2', ['Min', 'Max'], false));
+
+
+        // column_filters = column_filters.concat(createYADCFfilters(3, 59, "multi_select", 'select2', 'select', false, null));
+
+    // Initialize YADCF
+      yadcf.init(proteintable, column_filters, {
+      cumulative_filtering: false
+    });
+
+        // After both DataTable and yadcf have initialized, call showSegment
+        showSegment('icl3');
+
+        // Set the first tab as active
+        $('#segmentTabs .nav-item').first().addClass('active');
+        $('#segmentTabs .nav-link').first().addClass('active')
+            .attr('aria-selected', 'true')
+            .attr('aria-expanded', 'true');
+
+        $('.yadcf-filter-range-number-seperator').after('<br>');
+    });
+
+    $('#proteinTable').on('change', 'input.alt', function() {
+        var $checkbox = $(this);
+        var $td = $checkbox.closest('td');   // The <td> containing the checkbox
+        var $row = $checkbox.closest('tr');  // The <tr> containing the checkbox
+
+        if ($checkbox.is(':checked')) {
+            // Add 'highlight' class to all <td>s in the row
+            $row.find('td').addClass('highlight');
+            $row.addClass('alt_selected')
+        } else {
+            // Remove 'highlight' class from all <td>s in the row
+            $row.find('td').removeClass('highlight');
+            $row.removeClass('alt_selected')
+        }
+    });
+    
+
+    
+
+    //handle column visibility
+    function showSegment(segment) {
+        // Hide all segment columns
+        document.querySelectorAll('.segment-col').forEach(function(col) {
+            col.style.display = 'none';
+        });
+        // Show the selected segment columns
+        document.querySelectorAll('.' + segment + '-col').forEach(function(col) {
+            col.style.display = '';
+        });
+        // Update active tab
+        document.querySelectorAll('#segmentTabs .nav-link').forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+        document.getElementById(segment + '-tab').classList.add('active');
+    }
+
+    //Activate first tab
+    $('#segmentTabs .nav-item').first().addClass('active')
+
+    $('#segmentTabs .nav-link').first().addClass('active')
+    .attr('aria-selected', 'true')
+    .attr('aria-expanded', 'true');
+
+    </script>
+{% endblock %}

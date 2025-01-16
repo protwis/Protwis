@@ -104,7 +104,7 @@
                                 style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span>
                         </button>
                     </th>
-                    <!-- <th colspan=4 style='height:35px; text-align:left;'>
+                    <th colspan=4 style='height:35px; text-align:left;'>
                         pEC50
                         <span data-toggle="popover" data-placement="bottom" class="glyphicon glyphicon-info-sign"
                               title="Info" data-content="Mean of G protein family members">
@@ -121,7 +121,7 @@
                         <button type="button" class="close hide_columns1" columns="21,22,23,24"
                                 style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span>
                         </button>
-                    </th> -->
+                    </th>
                     <!-- <th colspan=5 style='height:35px; text-align:left;'>
                         Standard Deviation
                         <span data-toggle="popover" data-placement="bottom" class="glyphicon glyphicon-info-sign"
@@ -219,13 +219,13 @@
                                 <td><span>{{ logval }}</span></td>
                             {% endfor %}
 
-                     <!--        {% for q, pecval in cvals.pec50.items %}
+                            {% for q, pecval in cvals.pec50.items %}
                                 <td><span>{{ pecval }}</span></td>
                             {% endfor %}
 
                             {% for q, maxval in cvals.emax.items %}
                                 <td><span>{{ maxval }}</span></td>
-                            {% endfor %} -->
+                            {% endfor %}
 
                             
                             <td>{{ c }}</td>
@@ -311,7 +311,7 @@
                                 style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span>
                         </button>
                     </th>
-                    <!-- <th colspan=14 style='height:35px; text-align:left;'>
+                    <th colspan=14 style='height:35px; text-align:left;'>
                         pEC50
                         <button type="button" class="close hide_columns2" columns="27,28,29,30,31,32,33,34,35,36,37,38,39,40"
                                 style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span>
@@ -324,7 +324,7 @@
                         </button>
                     </th>
                     <th colspan=15 style='height:35px; text-align:left;'>
-                        Standard Deviation
+                        <!-- Standard Deviation
                         <button type="button" class="close hide_columns2" columns="55,56,57,58,59,60,61,62,63,64,65,66,67,68"
                                 style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span>
                         </button>
@@ -346,12 +346,16 @@
                     <th>IUPHAR</th>
                     <th>Name</th>
                     <th>Phys. /<br>Surr.</th>
-
+<!-- 
                     {% for p, subval in header.items  %}
                         <th>{{ p }}</th>
-                    {% endfor %}
+                    {% endfor %} -->
+                    <th>arrb</th>
+                    <!-- {% for p, subval in header.items  %}
+                        <th>{{ p }}</th>
+                    {% endfor %} -->
 
-                   <!--  {% for n in "x"|rjust:"4" %}
+                    <!-- {% for n in "x"|rjust:"4" %}
                         {% for p, subval in header.items  %}
                             <th colspan={{ subval|length }}>{{ p }}</th>
                         {% endfor %}
@@ -538,7 +542,7 @@
                           style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span>
                   </button>
               </th>
-              <!-- <th colspan=3 style='height:35px; text-align:left;'>
+              <th colspan=3 style='height:35px; text-align:left;'>
                   pEC50
                   <button type="button" class="close hide_columns3" columns="11,12,13"
                           style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span>
@@ -549,7 +553,7 @@
                   <button type="button" class="close hide_columns3" columns="14,15,16"
                           style="float:right;display:inline;" aria-label="Close"><span aria-hidden="true">&times;</span>
                   </button>
-              </th> -->
+              </th>
               <!-- <th colspan=4 style='height:35px; text-align:left;'>
                   Standard Deviation
                   <button type="button" class="close hide_columns3" columns="18,19,20"
@@ -574,19 +578,30 @@
               <th>Name</th>
               <th>Phys. /<br>Surr.</th>
 
-              {% for n in "x"|rjust:"1" %}
+                {% for n in "x"|rjust:"3" %}
+                    {% for subval in subunitheader %}
+                        <th>
+                            {{ subval|safe }}
+                        </th>
+                    {% endfor %}
+                {% endfor %}
+
+
+              <!-- {% for n in "x"|rjust:"1" %}
                   {% for subval in subunitheader %}
                       <th>
                           {{ subval|safe }}
                       </th>
                   {% endfor %}
-              {% endfor %}
+              {% endfor %} -->
+
+
           </tr>
           <tr>
               <th class='no-sort checkbox_tr'>
                   <input class="select-all" type="checkbox" onclick="select_all(this)">
               </th>
-              {% for n in "x"|rjust:"10" %}
+              {% for n in "x"|rjust:"16" %}
                   <th></th>
               {% endfor %}
           </tr>
@@ -623,13 +638,13 @@
                           <td>{{ logval }}</td>
                       {% endfor %}
 
-                      <!-- {% for q, pecval in cvals.pec50.items %}
+                      {% for q, pecval in cvals.pec50.items %}
                           <td>{{ pecval }}</td>
                       {% endfor %}
 
                       {% for q, maxval in cvals.emax.items %}
                           <td>{{ maxval }}</td>
-                      {% endfor %} -->
+                      {% endfor %}
 
                   </tr>
                 {% endif %}
@@ -649,10 +664,12 @@
     <script src="{% static 'home/js/jquery.dataTables.yadcf.js' %}"></script>
     <script src="{% static 'home/js/select2.js' %}"></script>
     <script src="{% static 'home/js/gpcrdb.js' %}"></script>
+    <script src="{% static 'home/js/xlsx.full.min.js' %}"></script>  
     <script src="{% static 'home/js/signprot-multitabtable.js' %}"></script>
     {% if page == 'gprot' %}
       <script src="{% static 'home/js/gprotein_coupling.js' %}"></script>
     {% else %}
       <script src="{% static 'home/js/arrestin_coupling.js' %}"></script>
+
     {% endif %}
 {% endblock %}

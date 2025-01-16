@@ -4,6 +4,7 @@
       <div class="panel-body">
           <div class='selection-heading'>
               <span class='selection-heading-text'>{{ first_header }}</span>
+              <br/>
           </div>
           {% if source == 'gpcr'%}
           <div class="text-center">
@@ -13,13 +14,21 @@
           <div class="text-center">
               <a class="btn btn-primary btn-mini " href="/structure/homology_models#keepselectionreference">Select from structure model browser</a>
           </div>
-          {% else %}
+          {% elif source == 'gprot' %}
           <div class="text-center">
               <a class="btn btn-primary btn-mini " href="/structure/g_protein_structure_browser#keepselectionreference">Select from G protein structure browser</a>
           </div>
           <br/>
           <div class="text-center">
               <a class="btn btn-primary btn-mini " href="/structure/complex_models#keepselectionreference">Select from G protein structure model browser</a>
+          </div>
+          {% else %}
+          <div class="text-center">
+              <a class="btn btn-primary btn-mini " href="/structure/arrestin_structure_browser#keepselectionreference">Select from arrestin structure browser</a>
+          </div>
+          <br/>
+          <div class="text-center">
+              <a class="btn btn-primary btn-mini " href="/structure/arrestin_models#keepselectionreference">Select from arrestin structure model browser</a>
           </div>
           {% endif %}
       </div>
@@ -28,6 +37,7 @@
       <div class="panel-body">
           <div class='selection-heading'>
               <span class='selection-heading-text'>{{ second_header }}</span>
+              <br/>
           </div>
           {% if source == 'gpcr'%}
           <div class="text-center">
@@ -37,13 +47,21 @@
           <div class="text-center">
               <a class="btn btn-primary btn-mini " href="/structure/homology_models#keepselectiontargets">Select from structure model browser</a>
           </div>
-          {% else %}
+          {% elif source == 'gprot' %}
           <div class="text-center">
               <a class="btn btn-primary btn-mini " href="/structure/g_protein_structure_browser#keepselectiontargets">Select from G protein structure browser</a>
           </div>
           <br/>
           <div class="text-center">
               <a class="btn btn-primary btn-mini " href="/structure/complex_models#keepselectiontargets">Select from G protein structure model browser</a>
+          </div>
+          {% else %}
+          <div class="text-center">
+              <a class="btn btn-primary btn-mini " href="/structure/arrestin_structure_browser#keepselectiontargets">Select from arrestin structure browser</a>
+          </div>
+          <br/>
+          <div class="text-center">
+              <a class="btn btn-primary btn-mini " href="/structure/arrestin_models#keepselectiontargets">Select from arrestin structure model browser</a>
           </div>
           {% endif %}
       </div>
